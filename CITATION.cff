@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+title: "RoughBlocks — Lean 4 formalization"
+message: "If you use this software or results derived from it, please cite the article below. You may also cite the software entry."
+authors:
+  - family-names: "Ribeiro"
+    given-names: "Marilton Costa (MariltonCR)"
+    orcid: "https://orcid.org/0009-0008-9208-5895"
+
+repository-code: "https://github.com/mariltondev/rough-blocks-lean"
+license: "Apache-2.0"
+keywords:
+  - lean4
+  - number theory
+  - sieve
+  - buchstab
+  - mertens
+
+preferred-citation:
+  type: article
+  title: "Conjectura de MariltonCR dos Primos Encaixados"
+  authors:
+    - family-names: "Ribeiro"
+      given-names: "Marilton Costa (MariltonCR)"
+      orcid: "https://orcid.org/0009-0008-9208-5895"
+  doi: 10.5281/zenodo.16734582
+  url: "https://doi.org/10.5281/zenodo.16734582"
+  year: 2025
+  identifiers:
+    - type: doi
+      value: 10.5281/zenodo.16734582
+  publisher: "Zenodo"
+
+references:
+  - type: software
+    title: "RoughBlocks — Lean 4"
+    authors:
+      - family-names: "Ribeiro"
+        given-names: "Marilton Costa (MariltonCR)"
+        orcid: "https://orcid.org/0009-0008-9208-5895"
+    repository-code: "https://github.com/mariltondev/rough-blocks-lean"
+    license: "Apache-2.0"
+    version: "0.1.0"
+    abstract: "Lean 4 formalization corresponding to the paper's results (auditable facade + heavy proofs)."

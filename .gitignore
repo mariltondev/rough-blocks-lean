@@ -1,0 +1,96 @@
+# =========================
+# Lean 4 / Lake
+# =========================
+**/build/
+**/.lake/
+*.olean
+*.ilean
+
+# (legado; hoje já coberto por .lake/)
+# /lake-packages/
+
+# Mantenha estes 2 ARQUIVOS sob controle de versão
+!lake-manifest.json
+!lean-toolchain
+
+# =========================
+# VS Code
+# =========================
+# (A) ignorar tudo do VS Code:
+# .vscode/
+
+# (B) manter recomendações úteis do time:
+.vscode/*
+!.vscode/extensions.json
+# !.vscode/settings.json   # descomente só se for genérico (sem paths pessoais)
+
+# =========================
+# LaTeX
+# =========================
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.brf
+*.dvi
+*.fdb_latexmk
+*.fls
+*.ilg
+*.ind
+*.idx
+*.ist
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.xdv
+_minted*
+*.pygtex
+
+# PDFs gerados (comente para versionar um PDF específico)
+*.pdf
+!docs/*.pdf
+
+# =========================
+# SO / Editores
+# =========================
+.DS_Store
+._*
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+
+# =========================
+# Scripts / Logs / Temporários
+# =========================
+/tmp/
+/logs/
+*.log
+*.tmp
+*.bak
+
+# =========================
+# Python (se usar)
+# =========================
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# =========================
+# Dados/artefatos grandes (opcional)
+# =========================
+/artifacts/
+/data/
+/figures/generated/
+*.csv
+*.tsv

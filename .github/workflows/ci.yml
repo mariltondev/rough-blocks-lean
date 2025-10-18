@@ -1,0 +1,69 @@
+name: Lean CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  light:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+
+      - name: Fetch mathlib cache (best-effort)
+        run: lake exe cache get || true
+
+      # Base da raiz (defs/check) antes de tudo
+      - name: Build core (Defs, Check)
+        run: |
+          lake build RoughBlocks.Defs
+          lake build RoughBlocks.Check
+
+      # Axioma externo (ponte uniforme) que a camada Light usa
+      - name: Build external certificate bridge
+        run: lake build RoughBlocks.External.BridgeUniform
+
+      # Camada Light completa (Export → Existence → Spec → Concrete)
+      - name: Build Light layer
+        run: |
+          lake build RoughBlocks.Light.Export
+          lake build RoughBlocks.Light.Existence
+          lake build RoughBlocks.Light.Spec
+          lake build RoughBlocks.Light.Concrete
+
+      # Demo opcional (não falha se não existir o exe)
+      - name: Run scratch demo (optional)
+        run: lake exe roughblocks_scratch || echo "no scratch executable"
+
+      # Falha se houver sorry/admit
+      - name: Fail on sorry/admit
+        run: |
+          if grep -R --include='*.lean' -nE '\b(sorry|admit)\b' RoughBlocks; then
+            exit 1
+          fi
+
+  heavy:
+    runs-on: ubuntu-latest
+    continue-on-error: true   # job não falha se algum alvo heavy quebrar
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+
+      - name: Fetch mathlib cache (best-effort)
+        run: lake exe cache get || true
+
+      # Cada build é best-effort dentro do próprio step:
+      - name: Build heavy modules (best-effort)
+        run: |
+          lake build RoughBlocks.Heavy.Identity || true
+          lake build RoughBlocks.Heavy.Log10Bounds || true
+          lake build RoughBlocks.Heavy.Buchstab.Core || true
+          lake build RoughBlocks.Heavy.Buchstab.MinFac || true
+          lake build RoughBlocks.Heavy.Buchstab || true
+          lake build RoughBlocks.Heavy.WindowLink.Core || true
+          lake build RoughBlocks.Heavy.WindowLink.Block || true
+          lake build RoughBlocks.Heavy.Bridge || true
+          lake build RoughBlocks.Heavy.Omega || true
+          lake build RoughBlocks.Heavy.Numeric || true
+          lake build RoughBlocks.Heavy.Interface || true

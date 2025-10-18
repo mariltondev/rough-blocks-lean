@@ -1,0 +1,8 @@
+/-
+SPDX-License-Identifier: Apache-2.0
+Copyright (c) 2025 Marilton Costa Ribeiro
+
+Part of the RoughBlocks project.
+This file is licensed under the Apache License 2.0 (see LICENSE).
+Docs/paper are under CC BY-NC-ND 4.0 (see LICENSE-docs-CC-BY-NC-ND).
+-/
