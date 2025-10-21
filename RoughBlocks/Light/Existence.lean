@@ -12,6 +12,7 @@ import RoughBlocks.Defs
 import RoughBlocks.Light.Export
 import RoughBlocks.Heavy.WindowLink.Block
 import RoughBlocks.External.BridgeUniform
+import RoughBlocks.Light.Native.Compute18793
 
 open RoughBlocks
 
@@ -42,12 +43,32 @@ theorem of_block_to_interval_primes
     exact (hnR p hp hdiv).le
   exact ⟨n, hL, hR, hprime⟩
 
+
+
 /-- Varredura determinística: para `2 ≤ m ≤ 10⁶` e `x ≤ 8`,
 há pelo menos um `m`-áspero no bloco `K m x`.
 Fonte: artefato computacional no Zenodo (DOI `10.5281/zenodo.17137291`). -/
 axiom budget_verified_by_scan
   {m x : ℕ} (hm₂ : 2 ≤ m) (hm_top : m ≤ 1_000_000) (hx : x ≤ 8) :
   RoughBlocks.countRoughInBlock m x ≥ 1
+
+
+
+-- /--
+-- Versão computacional do antigo `budget_verified_by_scan`,
+-- substituindo o axioma pela verificação nativa (`verify2_18793_true`).
+
+-- Garante formalmente `countRoughInBlock m x ≥ 1` para `2 ≤ m ≤ 18793` e `x ≤ 8`.
+-- A ponte real será conectada na Tarefa 2.
+-- -/
+-- theorem budget_verified_by_scan
+--   {m x : ℕ} (hm₂ : 2 ≤ m) (hm_top : m ≤ 18793) (hx : x ≤ 8) :
+--   RoughBlocks.countRoughInBlock m x ≥ 1 := by
+--   have hnative := Native.verify2_18793_true
+--   -- O retorno `true` cobre todos m,x até 18793.
+--   -- Aqui apenas fazemos o cast lógico até que a ponte seja formalizada.
+--   exact Nat.one_le_of_lt (by decide)
+
 
 /-- Existência para todo `m ≥ 10⁶`, usando a ponte uniforme externa. -/
 theorem existence_ge_1e6_uniform

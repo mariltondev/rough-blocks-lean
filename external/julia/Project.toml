@@ -1,3 +1,5 @@
 [deps]
 IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
-JSON               = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"

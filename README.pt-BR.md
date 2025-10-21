@@ -31,6 +31,22 @@ intervalos curtos $[X,X+Y]$, com $X\in[y^2,y^3]$ e $y\le Y\le 2y$:
 
 ![Inequality](docs/img/formula01.svg)
 
+$$
+\bigl\lvert\,\{\,X<n\le X+Y:\ P^-(n)>y\,\}\,\bigr\rvert
+\;\ge\; \frac{Y}{\log y}\,\omega\!\Bigl(\frac{\log X}{\log y}\Bigr)
+\;-\; C_1\,\frac{Y}{\log^{2} y}\;-\; C_2.
+$$
+
+**Forma de ponte (caso dos blocos, usada no certificado):**  
+Para $m\ge 10^6$ e $x\in\{0,\dots,8\}$:
+$$
+\bigl\lvert\,\{\,n\in K_x:\ P^-(n)>m\,\}\,\bigr\rvert \ \ge\ LB(m,x),
+\qquad
+LB(m,x)=\frac{m}{\log m}\,
+\omega\!\Bigl(2+\frac{\log(1+x/m)}{\log m}\Bigr)
+\;-\; C_1\,\frac{m}{\log^2 m}\;-\; C_2.
+$$
+
 Com constantes efetivas $C_0\le 2$, $C_1\le 4{,}4$ e $C_2=100$. Tratamos o bordo $X=y^2$
 separadamente e eliminamos termos de fronteira pela convenção $\omega(u)=0$ em $0<u<1$.
 Aplicando o lema local com $y=Y=m$ e $X=m^2+xm$, obtemos o resultado para cada $K_x$.
