@@ -18,14 +18,14 @@ open Real
 namespace RoughBlocks.Light
 
 /-- Cota uniforme:
-    para todo m ≥ 18793 e 0 ≤ x ≤ 8,
+    para todo m ≥ 18794 e 0 ≤ x ≤ 8,
     log(m^2 + x m)/log m ≤ 2 + log(1 + 8/m)/log m. -/
 lemma u_uniform_bound (m x : ℕ)
-  (hm : 18793 ≤ m) (hx0 : 0 ≤ x) (hx8 : x ≤ 8) :
+  (hm : 18794 ≤ m) (hx0 : 0 ≤ x) (hx8 : x ≤ 8) :
   (Real.log ((m:ℝ)^2 + (x:ℝ) * m)) / Real.log (m:ℝ)
     ≤ 2 + Real.log (1 + (8:ℝ) / m) / Real.log (m:ℝ) := by
   -- m ≥ 1 ⇒ m > 0 em ℝ
-  have hm1 : 1 ≤ m := le_trans (by decide : 1 ≤ 18793) hm
+  have hm1 : 1 ≤ m := le_trans (by decide : 1 ≤ 18794) hm
   have hm_pos_nat : 0 < m := Nat.succ_le_iff.mp hm1
   have hm_pos : 0 < (m:ℝ) := by exact_mod_cast hm_pos_nat
   have hm_ne  : (m:ℝ) ≠ 0 := ne_of_gt hm_pos
@@ -88,7 +88,7 @@ lemma u_uniform_bound (m x : ℕ)
 
   -- log m > 0 pois m > 1
   have hm_gt_one : (1:ℝ) < (m:ℝ) := by
-    have : (1:ℕ) < m := lt_of_lt_of_le (by decide : (1:ℕ) < 18793) hm
+    have : (1:ℕ) < m := lt_of_lt_of_le (by decide : (1:ℕ) < 18794) hm
     exact_mod_cast this
 
   -- `Real.log_pos_iff` precisa primeiro de `0 ≤ m` para produzir o ↔

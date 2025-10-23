@@ -1,9 +1,9 @@
-# bridge_certificate_18793.jl
+# bridge_certificate_18794.jl
 using IntervalArithmetic
 import IntervalArithmetic: interval
 using JSON
 
-# julia --project=external/julia external/julia/bridge_certificate_18793.jl certs/uniform-bridge-ge-18793.json
+# julia --project=external/julia external/julia/bridge_certificate_18794.jl certs/uniform-bridge-ge-18794.json
 
 # ω(u) por intervalos, cobrindo [1,3] com a fórmula peça-a-peça.
 function omega_I(uI::Interval{BigFloat})
@@ -36,7 +36,7 @@ function omega_I(uI::Interval{BigFloat})
     return res === nothing ? NaN..NaN : res
 end
 
-# Constrói, para cada x, um "u-range" UNIFORME em m∈[18793,∞):
+# Constrói, para cada x, um "u-range" UNIFORME em m∈[18794,∞):
 # O máximo de u(m,x) ocorre no m mínimo.
 function u_range_uniform(x::Int; m_min::BigFloat, pbits::Int)
     setprecision(BigFloat, pbits)
@@ -93,5 +93,5 @@ end
 
 # Ponto de entrada
 if abspath(PROGRAM_FILE) == @__FILE__
-    main("certs/uniform-bridge-ge-18793.json"; m_min_val=18793, pbits=256)
+    main("certs/uniform-bridge-ge-18794.json"; m_min_val=18794, pbits=256)
 end

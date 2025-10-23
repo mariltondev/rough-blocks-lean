@@ -1,6 +1,7 @@
-# external/julia/bridge_increment_18793.jl
-# Certificado "forte" (esqueleto) para a ponte incremental: m ≥ 18793, x ∈ {0..8}
-# Saída: certs/uniform-bridge-increment-18793.json
+# Certificado "forte" (esqueleto) para a ponte incremental: m ≥ 18794, x ∈ {0..8}
+# Saída: certs/uniform-bridge-increment-18794.json
+#
+# julia --project=. external/julia/bridge_increment_18794.jl
 #
 # OBS: Este script já exporta TODOS os campos racionais necessários para o Lean
 # fazer a checagem aritmética. Os termos M2 e R ainda estão com cotas
@@ -20,7 +21,7 @@ const C1    = C_INC + C_VAR      # 4.4
 const C2    = BigFloat(100)      # 100 exato
 
 # ---------------- Domínio ----------------
-const M_MIN = 18793
+const M_MIN = 18794
 const X_LO  = 0
 const X_HI  = 8
 
@@ -123,7 +124,7 @@ function build_payload(; pbits::Int=PBITS)
     return payload
 end
 
-function main(outpath::String="certs/uniform-bridge-increment-18793.json")
+function main(outpath::String="certs/uniform-bridge-increment-18794.json")
     payload = build_payload()
     mkpath(dirname(outpath))
     open(outpath, "w") do io

@@ -22,7 +22,7 @@ axiom bridge_ge_1e6_uniform
   (RoughBlocks.Heavy.Numeric.LB m x : ℝ) ≤ (RoughBlocks.countRoughInBlock m x : ℝ)
 
 
-/-- Axioma externo específico da faixa `m ≥ 18793` usado para fechar o elo
+/-- Axioma externo específico da faixa `m ≥ 18794` usado para fechar o elo
 `(Φ-dif) ≥ LB` no mesmo bloco curto.
 
 A dependência sobre o bound analítico `u_uniform_bound` é explícita (é o
@@ -30,12 +30,12 @@ insumo "leve"), enquanto a passagem para a diferença de `Φ` é um artefato
 externo (certificado numérico).
 -/
 /-
-  Axioma externo, análogo ao caso `≥ 10^6`, mas para `m ≥ 18793`:
-  para todo `m ≥ 18793` e `x ≤ 8`, vale `LB m x ≤ countRoughInBlock m x`.
+  Axioma externo, análogo ao caso `≥ 10^6`, mas para `m ≥ 18794`:
+  para todo `m ≥ 18794` e `x ≤ 8`, vale `LB m x ≤ countRoughInBlock m x`.
   A justificativa é via certificado numérico externo (Julia/IA), não formalizada aqui.
 -/
-axiom bridge_ge_18793_uniform
-  {m x : ℕ} (hm : 18793 ≤ m) (hx : x ≤ 8) :
+axiom bridge_ge_18794_uniform
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
   (RoughBlocks.Heavy.Numeric.LB m x : ℝ) ≤ (RoughBlocks.countRoughInBlock m x : ℝ)
 
 end RoughBlocks.External

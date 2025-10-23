@@ -91,20 +91,20 @@ def mainVerification (mMin mMax : Nat) : Bool := Id.run do
 /--
 Production entry point (provisional upper bound).
 
-TODO(MCR): switch `100` → `18793` after polynomial-time tuning and profiling.
+TODO(MCR): switch `100` → `18794` after polynomial-time tuning and profiling.
 
 This definition is the one consumed by the `native_decide` proof below.
 -/
-def verify2_18793 : Bool :=
-  mainVerification 2 18793  -- PROVISIONAL CAP: use 18793 once performance is tuned.
+def verify2_18794 : Bool :=
+  mainVerification 2 18794  -- PROVISIONAL CAP: use 18794 once performance is tuned.
 
 /--
 Computationally verified theorem.
 
-`native_decide` compiles and evaluates `verify2_18793` inside the kernel. When
+`native_decide` compiles and evaluates `verify2_18794` inside the kernel. When
 it returns `true`, the equality closes the goal. No external artifacts are used.
 -/
-theorem verify2_18793_true : verify2_18793 = true := by
+theorem verify2_18794_true : verify2_18794 = true := by
   native_decide
 
 end RoughBlocks.Light.Native

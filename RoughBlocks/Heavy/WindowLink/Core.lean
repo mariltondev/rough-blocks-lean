@@ -12,28 +12,19 @@ import RoughBlocks.Defs
 import RoughBlocks.Heavy.Buchstab.Core
 
 /-!
-# WindowLink/Core — lemas estruturais (janela) para o passo C3
+# WindowLink/Core — lemas de janela para `Φ_GE`
 
-Este módulo consolida identidades em janelas do tipo `(N₁, N₂]` para as contagens
-`PhiGE` (número de `n ≤ N` tais que `isRoughGE p n`), além de uma versão
-somada adequada ao passo `C3` do pipeline.
+Trabalhamos a partir da definição em `Buchstab/Core.lean`:
 
-## Convenções
-* A janela aberta-fechada `(N₁, N₂]` é representada por `Icc (N₁ + 1) N₂`.
-* `PhiGE N p` é por definição `((Icc 1 N).filter (fun n => isRoughGE p n)).card`.
+* `PhiGE X y := ((Finset.Icc 1 X).filter (fun n => isRoughGE y n)).card`.
 
-## Conteúdo
-* `PhiGE_diff_window_eq` — **identidade exata** em janelas: o cardinal da janela
-  é a diferença telescópica `PhiGE N₂ p - PhiGE N₁ p`.
-* `PhiGE_diff_window_ge` — desigualdade imediata decorrente da identidade.
-* `PhiGE_diff_window_ge_div` — especialização frequente em C3 com `N₁ = X/p`,
-  `N₂ = (X+Y)/p`.
-* `sum_card_eq_sum_diff_phiGE` — igualdade **parcela a parcela** sob somatório
-  (após coerção `ℕ → ℝ`), ligando o cardinal da janela à diferença correspondente
-  de `PhiGE`.
-
-> Observação: as provas são puramente combinatórias (particionamento de intervalos,
-> disjunção e additividade de cardinais). Não introduzem axiomas.
+Conteúdo:
+* `PhiGE_mono_X_WL` — monotonicidade em `X` (local a este arquivo);
+* `PhiGE_diff_window_eq` — identidade exata: janela = diferença telescópica;
+* `PhiGE_diff_window_ge` — desigualdade (corolário trivial da identidade);
+* `PhiGE_diff_window_ge_div` — caso com divisões por `p`;
+* `PhiGE_optimized`, `PhiGE_diff`, `PhiGE_diff_eq_optimized`;
+* `sum_card_eq_sum_diff_phiGE` — igualdade parcela-a-parcela sob somatório (coerção `ℕ → ℝ`).
 -/
 
 namespace RoughBlocks.Heavy
@@ -195,5 +186,37 @@ lemma sum_card_eq_sum_diff_phiGE
               simpa using (Nat.cast_sub hmono)
   -- Fecha por igualdade parcela-a-parcela.
   simp [hℝ]
+
+/-- Versão “otimizada” da janela — apenas atalho de notação. -/
+def PhiGE_optimized (start stop y : ℕ) : ℕ :=
+  ((Icc start stop).filter (fun n => isRoughGE y n)).card
+
+/-- Diferença no bloco `(m^2 + x m, m^2 + (x+1)m]`. -/
+def PhiGE_diff (m x : ℕ) : ℕ :=
+  let start := m^2 + x * m
+  let stop  := m^2 + (x + 1) * m
+  PhiGE_optimized (start + 1) stop (m + 1)
+
+/-- Igualdade “diferença = janela otimizada” para o bloco. -/
+lemma PhiGE_diff_eq_optimized (m x : ℕ) :
+  let start := m^2 + x * m
+  let stop  := m^2 + (x + 1) * m
+  (PhiGE stop (m+1) - PhiGE start (m+1)) = PhiGE_optimized (start+1) stop (m+1) := by
+  classical
+  intro start stop
+  -- `stop = start + m` via `(x+1)*m = x*m + m`
+  have hx1 : (x + 1) * m = x * m + m := by simpa [Nat.add_mul, Nat.one_mul]
+  have hstop : stop = start + m := by
+    dsimp [start, stop]
+    calc
+      m ^ 2 + (x + 1) * m
+          = m ^ 2 + (x * m + m) := by simpa [hx1]
+      _   = (m ^ 2 + x * m) + m := by
+            simp [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
+  have hle : start ≤ stop := by
+    simpa [hstop] using (Nat.le_add_right start m)
+  -- usa a identidade de janela e vira o lado
+  have h := PhiGE_diff_window_eq (m+1) start stop hle
+  simpa [PhiGE_optimized] using h.symm
 
 end RoughBlocks.Heavy

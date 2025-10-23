@@ -3,7 +3,7 @@ SPDX-License-Identifier: Apache-2.0
 Copyright (c) 2025
 
 Parte do projeto RoughBlocks.
-Base formal para verificação de certificados (intervalos) do caso ≥ 18793.
+Base formal para verificação de certificados (intervalos) do caso ≥ 18794.
 -/
 
 import Mathlib.Data.Real.Basic

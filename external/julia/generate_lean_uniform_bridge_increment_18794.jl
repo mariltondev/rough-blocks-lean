@@ -1,5 +1,6 @@
-# generate_lean_uniform_bridge_increment_18793.jl
-# Converte certs/uniform-bridge-increment-18793.json em um arquivo Lean com margens em ℚ.
+# generate_lean_uniform_bridge_increment_18794.jl
+# Converte certs/uniform-bridge-increment-18794.json em um arquivo Lean com margens em ℚ.
+# julia --project=. external/julia/generate_lean_uniform_bridge_increment_18794.jl
 
 using JSON
 
@@ -51,7 +52,7 @@ function main(json_in::String, lean_out::String)
         println(io, "import Mathlib\n")
         println(io, "namespace RoughBlocks.External.Certs\n")
         println(io, "structure BridgeRow where\n  x : ℕ\n  uLo : ℚ\n  uHi : ℚ\n  omegaLo : ℚ\n  omegaHi : ℚ\n  tMainLo : ℚ\n  m2Lo : ℚ\n  rLo : ℚ\n  e1Up : ℚ\n  e2 : ℚ\n  finalLowerLo : ℚ\n  lbHi : ℚ\n  deltaLo : ℚ\n")
-        println(io, "def rows18793 : List BridgeRow := [")
+        println(io, "def rows18794 : List BridgeRow := [")
         for (i,blk) in enumerate(byx)
             x = blk["x"]
             u = blk["u_interval_q"]
@@ -84,7 +85,7 @@ function main(json_in::String, lean_out::String)
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    json_in = get(ENV, "CERT_JSON", "certs/uniform-bridge-increment-18793.json")
-    lean_out = get(ENV, "LEAN_OUT", "RoughBlocks/External/Certs/UniformGE18793Bridge.lean")
+    json_in = get(ENV, "CERT_JSON", "certs/uniform-bridge-increment-18794.json")
+    lean_out = get(ENV, "LEAN_OUT", "RoughBlocks/External/Certs/UniformGE18794Bridge.lean")
     main(json_in, lean_out)
 end

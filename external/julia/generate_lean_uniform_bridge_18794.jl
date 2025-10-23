@@ -1,6 +1,6 @@
-# generate_lean_uniform_bridge_18793.jl
-# Lê certs/uniform-bridge-ge-18793.json e emite um arquivo Lean
+# Lê certs/uniform-bridge-ge-18794.json e emite um arquivo Lean
 # com os números como racionais exatos (ℚ) para verificação formal.
+# julia --project=. external/julia/generate_lean_uniform_bridge_18794.jl
 
 using JSON
 
@@ -45,7 +45,7 @@ function main(json_in::String, lean_out::String)
         println(io, "import Mathlib\n")
         println(io, "namespace RoughBlocks.External.Certs\n")
         println(io, "structure CertBlock where\n  x : ℕ\n  uLo : ℚ\n  uHi : ℚ\n  omegaLo : ℚ\n  omegaHi : ℚ\n")
-        println(io, "def certs18793 : List CertBlock := [")
+        println(io, "def certs18794 : List CertBlock := [")
         for (i,blk) in enumerate(byx)
             x = blk["x"]
             u = blk["u_range_certified"]
@@ -69,7 +69,7 @@ function main(json_in::String, lean_out::String)
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    json_in = get(ENV, "CERT_JSON", "certs/uniform-bridge-ge-18793.json")
-    lean_out = get(ENV, "LEAN_OUT", "RoughBlocks/External/Certs/UniformGE18793.lean")
+    json_in = get(ENV, "CERT_JSON", "certs/uniform-bridge-ge-18794.json")
+    lean_out = get(ENV, "LEAN_OUT", "RoughBlocks/External/Certs/UniformGE18794.lean")
     main(json_in, lean_out)
 end

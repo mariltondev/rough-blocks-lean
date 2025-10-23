@@ -1,10 +1,10 @@
 /-
 SPDX-License-Identifier: Apache-2.0
-Sanity-check formal do certificado UniformGE18793 em ℚ (sem IO).
+Sanity-check formal do certificado UniformGE18794 em ℚ (sem IO).
 -/
 
 import Mathlib
-import RoughBlocks.External.Certs.UniformGE18793
+import RoughBlocks.External.Certs.UniformGE18794
 
 namespace RoughBlocks.External.Certs
 
@@ -17,10 +17,10 @@ private def verifyAux : ℕ → List CertBlock → Bool
   | _, [] => true
   | i, b :: bs => (checkBlock i b) && verifyAux (i+1) bs
 
-def verify18793 : Bool := verifyAux 0 certs18793
+def verify18794 : Bool := verifyAux 0 certs18794
 
 -- Nota: para evitar computação pesada no kernel (comparações em ℚ de alta precisão),
 -- registramos uma sanidade fraca que sempre é verdadeira por reflexão.
-theorem certificate_18793_sanity : verify18793 = verify18793 := rfl
+theorem certificate_18794_sanity : verify18794 = verify18794 := rfl
 
 end RoughBlocks.External.Certs

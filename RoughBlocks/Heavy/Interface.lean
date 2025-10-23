@@ -11,19 +11,17 @@ import Mathlib
 import RoughBlocks.Defs
 
 /-
-Este arquivo expõe a interface “leve” usada pelos módulos Heavy:
+Interface “leve” consumida pelos módulos Heavy:
 
 * Enunciado canônico `ExistsInBlockStmt` (“existe um m-áspero em cada bloco”);
-* Constantes padrão `U0Default`, `C0Default`, `C1Default`, `C2Default` alinhadas ao paper;
+* Limiar técnico `U0Default` (paper) e limiar **real** `BridgeThreshold` (= 18794);
+* Constantes `C0Default`, `C1Default`, `C2Default` (alinhadas ao paper);
 * Versões discreta e real da contagem na janela (X, X+Y].
 
 Observações:
 - `C1Default` é `noncomputable` pois é introduzida como racional→real.
 - `C2Default` é natural (frequentemente coerido para `ℝ` nos módulos analíticos).
 - As janelas seguem a convenção `(X, X+Y] = { n | X < n ≤ X+Y }`.
-
-Esta interface é estável e serve como “contrato” para as provas numéricas/analíticas.
-Não altere as constantes sem atualizar as provas em `RoughBlocks.Heavy`.
 -/
 
 namespace RoughBlocks.Heavy
@@ -40,19 +38,18 @@ def ExistsInBlockStmt (threshold : ℕ) : Prop :=
   ∀ m x : ℕ, m ≥ threshold → x ≤ 8 →
     ∃ n : ℕ, n ∈ RoughBlocks.K m x ∧ RoughBlocks.mRough m n
 
-/--
-Limite inferior técnico a partir do qual os argumentos assintóticos passam a valer.
-Mantido em sincronia com os módulos `Heavy.*`.
--/
+/-- Limiar técnico mínimo para os insumos analíticos (Mertens etc.). -/
 def U0Default : ℕ := 1000
 
-/-- Constante base usada nas estimativas (ver paper). -/
+/-- Limiar **real** do certificado uniforme (conforme o paper): 18 794. -/
+def BridgeThreshold : ℕ := 18794
+
+/-- Alvo padrão do projeto: existe um m-áspero em cada bloco a partir do limiar real. -/
+abbrev ExistsInBlock : Prop := ExistsInBlockStmt BridgeThreshold
+
+/-- Constantes das estimativas (alinhadas ao paper). -/
 def C0Default : ℝ := (2 : ℝ)
-
-/-- Constante de erro principal na forma analítica (ver paper). -/
 noncomputable def C1Default : ℝ := ((22 : ℚ) / 5 : ℝ)
-
-/-- Termo constante (buffer) nas cotas inferiores. -/
 def C2Default : ℕ := 100
 
 /--
@@ -67,18 +64,21 @@ noncomputable def countWindow (y X Y : ℕ) : ℕ := by
   classical
   exact (((Finset.Icc (X + 1) (X + Y))).filter (fun n : ℕ => RoughBlocks.mRough y n)).card
 
-/--
-Versão em `ℝ` da contagem discreta `countWindow`. Útil para integrar
-as cotas analíticas (em `ℝ`) com a contagem em `ℕ`.
--/
+/-- Versão em `ℝ` da contagem discreta `countWindow`. -/
 noncomputable def lowerBoundCount (y X Y : ℕ) : ℝ := (countWindow y X Y : ℝ)
+
+/-! Sanidades fechadas (não dependem do ambiente): -/
 
 /-- Fato elementar: `U0Default ≥ 2`. Útil para descarregar hipóteses `m ≥ 2`. -/
 lemma U0Default_ge_two : (2 : ℕ) ≤ U0Default := by decide
 
-@[simp] lemma U0Default_def : U0Default = 1000 := rfl
-@[simp] lemma C0Default_def : C0Default = (2 : ℝ) := rfl
-@[simp] lemma C1Default_def : C1Default = (22 : ℝ) / 5 := rfl
-@[simp] lemma C2Default_def : C2Default = 100 := rfl
+/-- `U0Default ≤ BridgeThreshold` (garante que o limiar analítico fica bem abaixo do limiar real). -/
+lemma U0Default_le_BridgeThreshold : U0Default ≤ BridgeThreshold := by decide
+
+@[simp] lemma U0Default_def       : U0Default       = 1000  := rfl
+@[simp] lemma BridgeThreshold_def : BridgeThreshold  = 18794 := rfl
+@[simp] lemma C0Default_def       : C0Default       = (2 : ℝ) := rfl
+@[simp] lemma C1Default_def       : C1Default       = (22 : ℝ) / 5 := rfl
+@[simp] lemma C2Default_def       : C2Default       = 100 := rfl
 
 end RoughBlocks.Heavy

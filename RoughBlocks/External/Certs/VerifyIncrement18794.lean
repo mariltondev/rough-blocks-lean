@@ -1,5 +1,5 @@
 import Mathlib
-import RoughBlocks.External.Certs.UniformGE18793Bridge
+import RoughBlocks.External.Certs.UniformGE18794Bridge
 
 namespace RoughBlocks.External.Certs
 
@@ -8,7 +8,7 @@ namespace RoughBlocks.External.Certs
 --  - deltaLo = 0 em cada linha (margem nula, sem negativos)
 
 private def allRowsAre0to8 : Bool :=
-  match rows18793 with
+  match rows18794 with
   | [r0,r1,r2,r3,r4,r5,r6,r7,r8] =>
       decide (r0.x = 0 ∧ r1.x = 1 ∧ r2.x = 2 ∧ r3.x = 3 ∧ r4.x = 4 ∧ r5.x = 5 ∧ r6.x = 6 ∧ r7.x = 7 ∧ r8.x = 8)
   | _ => false
@@ -19,11 +19,13 @@ private def allDeltaZero : Bool :=
     match xs with
     | []      => true
     | r :: rs => (decide (r.deltaLo = zero)) && go rs
-  go rows18793
+  go rows18794
 
-def verifyIncrement18793 : Bool := allRowsAre0to8 && allDeltaZero
+def verifyIncrement18794 : Bool := allRowsAre0to8 && allDeltaZero
 
-theorem verifyIncrement18793_ok : verifyIncrement18793 = verifyIncrement18793 := rfl
+--theorem verifyIncrement18794_ok : verifyIncrement18794 = verifyIncrement18794 := rfl
+
+theorem verifyIncrement18794_ok : verifyIncrement18794 = true := by
+  native_decide
 
 end RoughBlocks.External.Certs
-

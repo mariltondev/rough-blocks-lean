@@ -12,7 +12,7 @@ Tarefa 1 — Faixa finita 2 \le m \le 18\,793 via técnica 1 (JSON → verificad
 Objetivo: eliminar o axioma budget_verified_by_scan e substituí-lo por um teorema em Lean que lê um certificado JSON e verifica cada par (m,x).
 
 1.1. Certificado (lado Julia)
-	•	Arquivo de saída: certs/finite-witnesses-2-18793.json
+	•	Arquivo de saída: certs/finite-witnesses-2-18794.json
 	•	Conteúdo por (m,x): um testemunho n e a fatoração completa de n (pares (p,e)), garantindo que o menor primo da fatoração é > m.
 Isso permite ao Lean verificar rapidamente:
 	1.	n \in K_x,
@@ -24,7 +24,7 @@ Esquema JSON (exemplo):
 
 {
   "meta": {
-    "range": {"m_min": 2, "m_max": 18793},
+    "range": {"m_min": 2, "m_max": 18794},
     "blocks": 9,
     "created_utc": "2025-10-19T00:00:00Z",
     "julia_version": "1.10.5",
@@ -74,8 +74,8 @@ lemma mRough_of_factorization
 
 	•	Teorema agregado (sem axioma):
 
-theorem budget_verified_by_cert_2_18793
-  : ∀ m, 2 ≤ m ∧ m ≤ 18793 → ∀ x, x ≤ 8 → ∃ n, BlockHasMRough m x n := ...
+theorem budget_verified_by_cert_2_18794
+  : ∀ m, 2 ≤ m ∧ m ≤ 18794 → ∀ x, x ≤ 8 → ∃ n, BlockHasMRough m x n := ...
 
 
 	•	Fail-fast: verifique hash do JSON antes de parsear:
@@ -131,13 +131,13 @@ Tarefa 3 — Plumbing final (Spec, Export, CI, docs e release)
 	•	Um #eval que imprime:
 	•	caminho dos dois JSON,
 	•	seus SHA256,
-	•	contagem de entradas esperadas (9*(18793-1+1) = 9*18792 = 169 128 itens).
+	•	contagem de entradas esperadas (9*(18794-1+1) = 9*18792 = 169 128 itens).
 
 	2.	Export
 
 	•	RoughBlocks/Light/Export.lean:
 	•	exporte dois resultados:
-	•	budget_main_finite : ∀ m∈[2,18793], ∀ x≤8, ...
+	•	budget_main_finite : ∀ m∈[2,18794], ∀ x≤8, ...
 	•	budget_main_asymptotic : ∀ m≥18794, ∀ x≤8, ...
 	•	e o “faixa total” como corolário.
 
@@ -241,15 +241,15 @@ jq -r '.meta.sha256_data' certs/finite-witnesses-10001-14000.json
 
 julia --project=external/julia -e '
 include("external/julia/generate_finite_cert.jl");
-ws = generate_range(14001, 18793; blocks=9);
+ws = generate_range(14001, 18794; blocks=9);
 mkpath("certs");
-obj = to_json_obj(ws; mmin=14001, mmax=18793, blocks=9);
-sha = write_with_sha("certs/finite-witnesses-14001-18793.json", obj);
-println("OK  certs/finite-witnesses-14001-18793.json");
+obj = to_json_obj(ws; mmin=14001, mmax=18794, blocks=9);
+sha = write_with_sha("certs/finite-witnesses-14001-18794.json", obj);
+println("OK  certs/finite-witnesses-14001-18794.json");
 println("SHA256_DATA = ", sha);
 '
-jq -r '.data | length' certs/finite-witnesses-14001-18793.json
-jq -r '.meta.sha256_data' certs/finite-witnesses-14001-18793.json
+jq -r '.data | length' certs/finite-witnesses-14001-18794.json
+jq -r '.meta.sha256_data' certs/finite-witnesses-14001-18794.json
 
 
 
@@ -278,7 +278,7 @@ def summarize (path : System.FilePath) : IO Unit := do
 -- #eval summarize ⟨"certs/finite-witnesses-03001-06000.json"⟩
 -- #eval summarize ⟨"certs/finite-witnesses-06001-10000.json"⟩
 -- #eval summarize ⟨"certs/finite-witnesses-10001-14000.json"⟩
--- #eval summarize ⟨"certs/finite-witnesses-14001-18793.json"⟩
+-- #eval summarize ⟨"certs/finite-witnesses-14001-18794.json"⟩
 
 
 
@@ -288,19 +288,19 @@ julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finit
 julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finite-witnesses-03001-06000.json
 julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finite-witnesses-06001-10000.json
 julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finite-witnesses-10001-14000.json
-julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finite-witnesses-14001-18793.json
+julia --project=external/julia external/julia/codegen_finite_lean.jl certs/finite-witnesses-14001-18794.json
 
 
 xx
 
-caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.Native.Compute18793 
-caffeinate -dimsu env LAKE_JOBS=1 time lake -v build RoughBlocks.Light.Native.Compute18793
-caffeinate -dimsu env LAKE_JOBS=1 time lake build RoughBlocks.Light.Native.Compute18793
+caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.Native.Compute18794 
+caffeinate -dimsu env LAKE_JOBS=1 time lake -v build RoughBlocks.Light.Native.Compute18794
+caffeinate -dimsu env LAKE_JOBS=1 time lake build RoughBlocks.Light.Native.Compute18794
 
 
 
-caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.FiniteBridge_18793
-lake -v build RoughBlocks.Light.FiniteBridge_18793
+caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.FiniteBridge_18794
+lake -v build RoughBlocks.Light.FiniteBridge_18794
 
 caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.Generated.FiniteData_00002_01000
 lake -v build RoughBlocks.Light.Generated.FiniteData_00002_01000
@@ -417,11 +417,11 @@ bash -lc 'docker run --rm -t \
 
 
 
-(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % julia --project=external/julia external/julia/bridge_increment_18793.jl
+(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % julia --project=external/julia external/julia/bridge_increment_18794.jl
 
-(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % jq . certs/uniform-bridge-increment-18793.json | head
+(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % jq . certs/uniform-bridge-increment-18794.json | head
 
-(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % jq -r '.by_x[] | [.x, .delta_lo_q] | @tsv' certs/uniform-bridge-increment-18793.json
+(base) mariltoncr@MacBook-Pro-de-Marilton rough-blocks-lean % jq -r '.by_x[] | [.x, .delta_lo_q] | @tsv' certs/uniform-bridge-increment-18794.json
 
 
 
@@ -444,3 +444,93 @@ com \(C_1\le 4.4\), \(C_2=100\), e a convenção \(\omega(u)=0\) para \(0<u<1\).
 
 
 
+
+
+
+compilou. antes de expandir , tá confirmado que é 100% sem sorry, axioma, hipotese, ou qualquer tipo de mock e foi aceito pelo compilador Lean de forma robusta completa?
+
+O compilador sabe que os números primos usados são primos mesmos e não fixos aleatórios? Ele sabe disso?
+
+
+
+Olhe para mim agora. Até aqui estamos 100% sem sorry, axioma, hipotese, ou qualquer tipo de mock e foi aceito pelo compilador Lean de forma robusta completa?
+
+
+
+/////////////////////////////////////////////////
+import Mathlib
+import RoughBlocks.External.Certs.UniformGE18794Bridge
+
+namespace RoughBlocks.External.Certs
+
+-- Sanidade estrutural do certificado “forte” (incremento):
+--  - existem 9 linhas (x = 0..8)
+--  - deltaLo = 0 em cada linha (margem nula, sem negativos)
+
+private def allRowsAre0to8 : Bool :=
+  match rows18794 with
+  | [r0,r1,r2,r3,r4,r5,r6,r7,r8] =>
+      decide (r0.x = 0 ∧ r1.x = 1 ∧ r2.x = 2 ∧ r3.x = 3 ∧ r4.x = 4 ∧ r5.x = 5 ∧ r6.x = 6 ∧ r7.x = 7 ∧ r8.x = 8)
+  | _ => false
+
+private def allDeltaZero : Bool :=
+  let zero : ℚ := 0
+  let rec go (xs : List BridgeRow) : Bool :=
+    match xs with
+    | []      => true
+    | r :: rs => (decide (r.deltaLo = zero)) && go rs
+  go rows18794
+
+def verifyIncrement18794 : Bool := allRowsAre0to8 && allDeltaZero
+
+--theorem verifyIncrement18794_ok : verifyIncrement18794 = verifyIncrement18794 := rfl
+
+theorem verifyIncrement18794_ok : verifyIncrement18794 = true := by
+  native_decide
+
+end RoughBlocks.External.Certs
+/////////////////////////////////////////////////
+
+
+
+
+
+/////////////////////////////////////////////////
+theorem bridge_ge_18794_uniform_of_verified
+  (_ : verifyIncrement18794 = true)
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8)
+  (hPhiDiff_ge_LB :
+    ((PhiGE (m*m + x*m + m) (m+1) : ℝ)
+      - (PhiGE (m*m + x*m) (m+1) : ℝ))
+      ≥ Numeric.LB m x)
+  : (Numeric.LB m x : ℝ) ≤ (countRoughInBlock m x : ℝ) := by
+  -- `18794 ≤ m` ⇒ `2 ≤ m`
+  have hm2 : 2 ≤ m := le_trans (by decide : (2 : ℕ) ≤ 18794) hm
+  -- Igualdade bloco curto ↔ diferença de Φ (p := m+1)
+  have hCountEq := countRoughInBlock_eq_phiDiff_succ_real m x hm2 hx
+  -- Ponte modular
+  exact LB_le_count_block (fun N _ => (PhiGE N (m+1) : ℝ)) m x hm2 hx
+    (by simpa [ge_iff_le] using hPhiDiff_ge_LB)
+    hCountEq
+
+
+theorem bridge_ge_18794_uniform_fully_verified
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
+  (Numeric.LB m x : ℝ) ≤ (countRoughInBlock m x : ℝ) :=
+  RoughBlocks.External.bridge_ge_18794_from_verified_certificate
+    full_certificate_is_valid
+    hm
+    hx
+
+end
+/////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////
+Interface.lean
+
+Defs.lean
+
+def m0 : ℕ := 18794
+/////////////////////////////////////////////////
