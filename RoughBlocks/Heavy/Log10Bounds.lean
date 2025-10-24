@@ -17,11 +17,16 @@ import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Real.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Exp
+--import Mathlib.Algebra.GroupPower.Lemmas
 
 namespace RoughBlocks.Heavy
 namespace Log10Bounds
 
 open scoped BigOperators Topology
+open Real
 
 -- Aumenta o limite de heartbeat para evitar timeout em reduções intensivas.
 set_option maxHeartbeats 2000000
@@ -394,6 +399,67 @@ lemma log_18794_bounds :
       simpa [h_exp_tsum] using sum_le_tsum_nonneg
     have : (18794 : ℝ) ≤ Real.exp y := le_trans hsum_ge hsum_le_exp
     exact (Real.log_le_iff_le_exp hpos).mpr (by simpa [y] using this)
+
+-- lemma log_ge_8_of_ge_2981_admit {x : ℝ} (hx : (2981 : ℝ) ≤ x) : (8 : ℝ) ≤ Real.log x := by
+--   have hxpos : 0 < x := by linarith
+--   have : Real.exp 8 ≤ x := by
+--     have : Real.exp 8 < 2981 := by admit  -- exp(8) ≈ 2980.9579 < 2981
+--     linarith
+--   exact (Real.le_log_iff_exp_le hxpos).mpr this
+
+-- Monotonicidade de ^n em [0, ∞): se 0 ≤ a ≤ b, então a^n ≤ b^n
+private lemma pow_le_pow_of_le_of_nonneg {a b : ℝ}
+    (ha : 0 ≤ a) (hab : a ≤ b) : ∀ n : ℕ, a^n ≤ b^n
+  | 0 =>
+      -- a^0 = b^0 = 1
+      show (a^0 : ℝ) ≤ b^0 from by
+        have : (1 : ℝ) ≤ 1 := le_rfl
+        simpa using this
+  | (n+1) =>
+      -- passo indutivo
+      have ih : a^n ≤ b^n := pow_le_pow_of_le_of_nonneg ha hab n
+      have hb : 0 ≤ b := le_trans ha hab
+      have h1 : a^n * a ≤ b^n * a :=
+        mul_le_mul_of_nonneg_right ih ha
+      have h2 : b^n * a ≤ b^n * b :=
+        mul_le_mul_of_nonneg_left hab (pow_nonneg hb n)
+      have h : a^n * a ≤ b^n * b := le_trans h1 h2
+      -- converter para ^(n+1)
+      by
+        simpa [pow_succ] using h
+
+-- Passo numérico: e^8 < 2981 (sem Interval)
+private lemma exp8_lt_2981 : Real.exp 8 < (2981 : ℝ) := by
+  -- |e - 2244083/825552| ≤ 10⁻¹⁰  ⇒  e ≤ 2244083/825552 + 10⁻¹⁰
+  have e_upper : Real.exp 1 ≤ (2244083 : ℝ) / 825552 + 1 / (10 : ℝ) ^ 10 := by
+    have h := (abs_le.mp Real.exp_one_near_10).2
+    linarith
+  -- escolhe v = 2.718282 como cota superior (rigorosa) de e
+  have step_up :
+      ( (2244083 : ℝ) / 825552 + 1 / (10 : ℝ) ^ 10 )
+      ≤ (2718282 : ℝ) / 1000000 := by
+    norm_num
+  let v : ℝ := (2718282 : ℝ) / 1000000
+  have e_le_v : Real.exp 1 ≤ v := le_trans e_upper step_up
+
+  -- eleva ambos lados à 8ª potência preservando ≤
+  have hpow : Real.exp 8 ≤ v ^ 8 := by
+    have h0 : 0 ≤ Real.exp 1 := (Real.exp_pos _).le
+    have := pow_le_pow_of_le_of_nonneg h0 e_le_v 8
+    -- exp (8*1) = (exp 1)^8
+    simpa [Real.exp_nat_mul] using this
+
+  -- fecha o número puro v^8 < 2981
+  have v8_lt : v ^ 8 < (2981 : ℝ) := by
+    norm_num
+  exact lt_of_le_of_lt hpow v8_lt
+
+lemma log_ge_8_of_ge_2981 {x : ℝ} (hx : (2981 : ℝ) ≤ x) :
+  (8 : ℝ) ≤ Real.log x := by
+  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2981) hx
+  -- de e^8 < 2981 ≤ x obtemos e^8 ≤ x
+  have : Real.exp 8 ≤ x := (le_of_lt exp8_lt_2981).trans hx
+  exact (Real.le_log_iff_exp_le hxpos).mpr this
 
 end Log10Bounds
 end RoughBlocks.Heavy

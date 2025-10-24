@@ -8,6 +8,7 @@ import RoughBlocks.External.Certs.UniformGE18794Bridge
 namespace RoughBlocks.External.Certs
 
 open RoughBlocks RoughBlocks.Heavy
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-- Fixamos m = 18794 e x = 0. -/
 def m0 : ℕ := 18794

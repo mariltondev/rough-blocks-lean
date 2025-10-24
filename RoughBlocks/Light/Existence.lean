@@ -90,7 +90,7 @@ Para `m ≥ 2` e `x ≤ 8`, existe `n` no bloco `K m x`
 tal que todos os primos que dividem `n` são `≥ m`.  Junta:
 * `budget_verified_by_scan` para `2 ≤ m ≤ 10⁶`;
 * `existence_ge_1e6_uniform` para `m ≥ 10⁶`. -/
-theorem existence_main_all
+theorem existence_main_all_10_6
   {m x : ℕ} (hm : 2 ≤ m) (hx : x ≤ 8) :
   ∃ n,
     m ^ 2 + x * m + 1 ≤ n ∧
@@ -107,6 +107,8 @@ theorem existence_main_all
   · -- caso “alto”: m ≥ 10^6  (via ponte uniforme + parte formal)
     have hm_ge : 1_000_000 ≤ m := Nat.le_of_not_lt h
     exact RoughBlocks.Light.existence_ge_1e6_uniform (m := m) (x := x) hm_ge hx
+
+ -- #print axioms RoughBlocks.Light.existence_main_all_10_6
 
 -- teste rápido opcional (pode remover se quiser o arquivo 100% limpo):
 example (m x : ℕ) (hm : 1_000_000 ≤ m) (hx : x ≤ 8) :

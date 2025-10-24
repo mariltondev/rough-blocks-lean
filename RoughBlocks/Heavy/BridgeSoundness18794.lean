@@ -9,6 +9,7 @@ import RoughBlocks.External.BridgeFromCert18794
 
 open RoughBlocks RoughBlocks.Heavy
 open RoughBlocks.External.Certs.FullVerifier
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 noncomputable section
 

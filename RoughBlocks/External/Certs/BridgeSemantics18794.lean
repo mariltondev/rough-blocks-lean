@@ -27,6 +27,7 @@ noncomputable section
 namespace RoughBlocks.External.Certs
 
 open RoughBlocks RoughBlocks.Heavy
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-- Seleciona a linha `rows18794` correspondente a `x ≤ 8`. -/
 def row18794Of (x : ℕ) (hx : x ≤ 8) : BridgeRow :=

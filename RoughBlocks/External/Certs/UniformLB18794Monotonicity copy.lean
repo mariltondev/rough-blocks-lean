@@ -7,24 +7,19 @@ This file is licensed under the Apache License 2.0 (see LICENSE).
 Docs/paper are under CC BY-NC-ND 4.0 (see LICENSE-docs-CC-BY-NC-ND).
 -/
 
-
 import Mathlib
-import RoughBlocks.Defs
-import RoughBlocks.Heavy.Numeric
-import RoughBlocks.Heavy.Interface
-import RoughBlocks.Heavy.WindowLink.Block
 import RoughBlocks.External.Certs.UniformGE18794Bridge
 import RoughBlocks.External.Certs.UniformLB18794Bridge
 import RoughBlocks.External.Certs.AllNine_Framework
 import RoughBlocks.Heavy.Log10Bounds
-
+import RoughBlocks.Heavy.Interface
+import RoughBlocks.Heavy.Numeric
 
 namespace RoughBlocks.External.Certs
 noncomputable section
 open Real
 open Classical
 open RoughBlocks RoughBlocks.Heavy
-open RoughBlocks.Heavy.Numeric
 open RoughBlocks.External.Certs
 open RoughBlocks.External.Certs.UniformLB18794Bridge
 open RoughBlocks.External.Certs.UniformGE18794Bridge
@@ -370,8 +365,6 @@ theorem phiDiff_ge_uniformLB_for_all_m_formal
 
 
 
-
-
 /-- "Dois m-ásperos" na faixa formal (`m ≥ BridgeThreshold`, `m ≥ m0`), sem `h_base` nem `hvl5`. -/
 theorem two_mRough_in_block_for_all_m_formal
   {m : ℕ} (hmB : BridgeThreshold ≤ m) (hm : m0 ≤ m) (x : Fin 9)
@@ -399,10 +392,15 @@ theorem two_mRough_in_block_for_all_m_formal
 
    -- #print axioms RoughBlocks.External.Certs.two_mRough_in_block_for_all_m_formal
 
+
+
+
+
+
 /-- Versão numérica: em cada um dos 9 blocos há **pelo menos 1** m-áspero,
 para todo `m ≥ 18794` (na prática: `m ≥ BridgeThreshold` e `m ≥ m0`).
 As duas hipóteses computacionais são as mesmas usadas na ponte. -/
-theorem one_mRough_in_allNine_from_18794_ipth
+theorem one_mRough_in_allNine_from_18794
   {m : ℕ} (hmB : BridgeThreshold ≤ m) (hm : m0 ≤ m)
   (hF : ∀ x : Fin 9, fL x (Real.log (m : ℝ)) ≤ RoughBlocks.Heavy.Numeric.margin m)
   (hL : ∀ x : Fin 9, RoughBlocks.Heavy.Numeric.LB m (x : ℕ) ≤ PhiDiffAt m (x : ℕ)) :
@@ -411,24 +409,28 @@ theorem one_mRough_in_allNine_from_18794_ipth
   have h2 := two_mRough_in_block_for_all_m_formal (m := m) hmB hm x (hF x) (hL x)
   exact (le_trans (by decide : 1 ≤ 2) h2)
 
-  -- #print axioms RoughBlocks.External.Certs.one_mRough_in_allNine_from_18794_ipth
+ -- #print axioms RoughBlocks.External.Certs.one_mRough_in_allNine_from_18794
 
 /-- Versão existencial: em cada um dos 9 blocos **existe** um m-áspero,
 para todo `m ≥ 18794` (mesmas hipóteses computacionais de ponte). -/
-theorem exists_mRough_in_allNine_from_18794_hpt
+theorem exists_mRough_in_allNine_from_18794
   {m : ℕ} (hmB : BridgeThreshold ≤ m) (hm : m0 ≤ m)
   (hF : ∀ x : Fin 9, fL x (Real.log (m : ℝ)) ≤ RoughBlocks.Heavy.Numeric.margin m)
   (hL : ∀ x : Fin 9, RoughBlocks.Heavy.Numeric.LB m (x : ℕ) ≤ PhiDiffAt m (x : ℕ)) :
   ∀ x : Fin 9, ∃ k ∈ K m (x : ℕ), mRough m k := by
   intro x
-  have h1 := one_mRough_in_allNine_from_18794_ipth (m := m) hmB hm hF hL x
+  have h1 := one_mRough_in_allNine_from_18794 (m := m) hmB hm hF hL x
   have hpos : 0 < ((K m (x : ℕ)).filter (mRough m)).card :=
     Nat.lt_of_lt_of_le (by decide : 0 < 1) h1
   obtain ⟨k, hk⟩ := Finset.card_pos.mp hpos
   rcases Finset.mem_filter.mp hk with ⟨hkK, hkR⟩
   exact ⟨k, hkK, hkR⟩
 
-  -- #print axioms RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794_hpt
+ -- #print axioms RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794
+
+
+
+
 
 end
 end RoughBlocks.External.Certs

@@ -47,6 +47,7 @@ namespace Numeric
 
 open scoped BigOperators Topology
 open Set
+open Real
 open RoughBlocks.Heavy.Log10Bounds
 
 /-- Para `m ≥ 2`, tem-se `Real.log m > 0`. -/
@@ -55,14 +56,13 @@ lemma log_pos_of_ge_two {m : ℕ} (hm : 2 ≤ m) : 0 < Real.log (m : ℝ) := by
     exact_mod_cast (lt_of_lt_of_le (by decide : (0 : ℕ) < 2) hm)
   have hm1 : (1 : ℝ) < (m : ℝ) := by
     exact_mod_cast (lt_of_lt_of_le (by decide : (1 : ℕ) < 2) hm)
-  -- `Real.log_pos_iff` pede `0 ≤ x`
   exact (Real.log_pos_iff hm0.le).2 hm1
 
 /-- Cota elementar
 \[
   \delta := \frac{\log\!\bigl(1 + x/m\bigr)}{\log m} \;\le\; \frac{8}{m \log m},
 \]
-válida para `m ≥ 2` e `x ≤ 8`. Usa `log(1+u) ≤ u` e monotonicidade. -/
+válida para `m ≥ 2` e `x ≤ 8`. -/
 lemma delta_le_8_div_m_log {m x : ℕ} (hm : 2 ≤ m) (hx : x ≤ 8) :
   Real.log (1 + (x : ℝ) / (m : ℝ)) / Real.log (m : ℝ)
     ≤ (8 : ℝ) / ((m : ℝ) * Real.log (m : ℝ)) := by
@@ -98,8 +98,9 @@ noncomputable def margin (m : ℕ) : ℝ :=
   - C1Default * ((m : ℝ) / (Real.log (m : ℝ))^2)
   - (C2Default : ℝ)
 
-/-- Para `X = m^2 + x m` e `u := log X / log m`, se `m ≥ U0Default` e `x ≤ 8` então `2 ≤ u ≤ 3`.
-A prova _sanduícha_ `X` entre `m^2` e `m^3` (usando `m ≥ 8` e `x ≤ 8`). -/
+
+
+/-- Para `X = m^2 + x m` e `u := log X / log m`, se `m ≥ U0Default` e `x ≤ 8` então `2 ≤ u ≤ 3`. -/
 lemma u_block_range {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
   (2 : ℝ) ≤ Real.log ((m^2 + x*m : ℕ) : ℝ) / Real.log (m : ℝ) ∧
   Real.log ((m^2 + x*m : ℕ) : ℝ) / Real.log (m : ℝ) ≤ (3 : ℝ) := by
@@ -114,7 +115,7 @@ lemma u_block_range {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
     have : 0 < m^2 := by simpa [pow_two] using Nat.mul_pos hm_pos_nat hm_pos_nat
     exact_mod_cast this
 
-  -- Lado esquerdo: `2 ≤ log X / log m`
+  -- Lado esquerdo
   have hX_ge_m2 : (m^2 : ℕ) ≤ X := by dsimp [X]; exact Nat.le_add_right _ _
   have h_left : (2 : ℝ) ≤ Real.log (X : ℝ) / Real.log (m : ℝ) := by
     by_cases hx0 : x = 0
@@ -147,7 +148,7 @@ lemma u_block_range {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
         simpa [hlog_pow, mul_comm, mul_left_comm, mul_assoc, hlog_ne] using this
       exact le_of_lt this
 
-  -- Lado direito: `log X / log m ≤ 3` via `X ≤ m^3`
+  -- Lado direito
   have hm_ge8 : 8 ≤ m := le_trans (by decide : (8 : ℕ) ≤ U0Default) hm
   have hx_mul_le : x * m ≤ 8 * m := Nat.mul_le_mul_right _ hx
   have h8m_le_m2 : 8 * m ≤ m^2 := by
@@ -177,6 +178,8 @@ lemma u_block_range {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
     simpa [hpow3, mul_div_assoc, (ne_of_gt (log_pos_of_ge_two hm_ge2))] using h_right_div
   exact ⟨h_left, h_right⟩
 
+
+
 /-- Cota inferior para `LB m x` substituindo `ω(u) ≥ 1/3` quando `u ∈ [2,3]`. -/
 lemma LB_ge_margin {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
   LB m x ≥
@@ -200,17 +203,21 @@ lemma LB_ge_margin {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
     mul_le_mul_of_nonneg_left hω hcoef_nonneg
   exact sub_le_sub (sub_le_sub hmain le_rfl) le_rfl
 
-/-- Versão conveniente que reescreve a cota em termos de `margin`. -/
+
+/-- Versão conveniente em termos de `margin`. -/
 lemma LB_ge_margin' {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
   LB m x ≥ margin m := by
   simpa [margin] using (LB_ge_margin (m := m) (x := x) hm hx)
 
-/-! ## Derivadas usadas na monotonicidade de `marginR` -/
+/-! ## Derivadas usadas na monotonicidade de `marginR` (caso 1/3) -/
 
 noncomputable def marginR (t : ℝ) : ℝ :=
   ((1 : ℝ) / 3) * (t / Real.log t)
   - C1Default * (t / (Real.log t)^2)
   - (C2Default : ℝ)
+
+
+
 
 @[simp] lemma margin_coe (m : ℕ) : margin m = marginR (m : ℝ) := by
   simp [margin, marginR, div_eq_mul_inv, pow_two, mul_comm, mul_left_comm, mul_assoc]
@@ -220,8 +227,7 @@ lemma hasDerivAt_t_div_log {x : ℝ} (hx : 1 < x) :
     HasDerivAt (fun t => t / Real.log t)
       ((Real.log x - 1) / (Real.log x)^2) x := by
   have hx0 : 0 < x := lt_trans one_pos hx
-  have hf : HasDerivAt (fun t : ℝ => t) (1 : ℝ) x := by
-    exact hasDerivAt_id x
+  have hf : HasDerivAt (fun t : ℝ => t) (1 : ℝ) x := hasDerivAt_id x
   have hg : HasDerivAt Real.log ((1 : ℝ)/x) x := by
     simpa [one_div] using Real.hasDerivAt_log (ne_of_gt hx0)
   have hlog_ne : Real.log x ≠ 0 := by
@@ -231,23 +237,28 @@ lemma hasDerivAt_t_div_log {x : ℝ} (hx : 1 < x) :
   field_simp [pow_two] at h
   simpa [mul_comm, mul_left_comm, mul_assoc, sub_eq_add_neg] using h
 
+
+
 /-- Derivada de `t ↦ t / (log t)^2` para `t > 1`. -/
 lemma hasDerivAt_t_div_log_sq {x : ℝ} (hx : 1 < x) :
     HasDerivAt (fun t => t / (Real.log t)^2)
       ((Real.log x - 2) / (Real.log x)^3) x := by
   have hx0 : 0 < x := lt_trans one_pos hx
-  have hf : HasDerivAt (fun t : ℝ => t) (1 : ℝ) x := by
-    exact hasDerivAt_id x
+  have hf : HasDerivAt (fun t : ℝ => t) (1 : ℝ) x := hasDerivAt_id x
   have hlog' : HasDerivAt Real.log ((1 : ℝ)/x) x := by
     simpa [one_div] using Real.hasDerivAt_log (ne_of_gt hx0)
-  have hpow : HasDerivAt (fun t => (Real.log t)^2) (2 * Real.log x * ((1:ℝ)/x)) x := by
-    simpa [pow_two, two_mul, mul_comm, mul_left_comm, mul_assoc] using (HasDerivAt.pow hlog' 2)
+  have hpow : HasDerivAt (fun t => (Real.log t)^2)
+      (2 * Real.log x * ((1:ℝ)/x)) x := by
+    simpa [pow_two, two_mul, mul_comm, mul_left_comm, mul_assoc]
+      using (HasDerivAt.pow hlog' 2)
   have hden_ne : (Real.log x)^2 ≠ 0 := by
     have : 0 < Real.log x := (Real.log_pos_iff (le_of_lt hx0)).2 hx
     simpa using pow_ne_zero 2 (ne_of_gt this)
   have hdiv := hf.div hpow hden_ne
   field_simp [pow_two, pow_three, mul_comm, mul_left_comm, mul_assoc] at hdiv
   simpa [pow_two, pow_three, mul_comm, mul_left_comm, mul_assoc, sub_eq_add_neg] using hdiv
+
+
 
 /-- Derivada explícita de `marginR` para `x > 1`. -/
 lemma hasDerivAt_marginR {x : ℝ} (hx : 1 < x) :
@@ -257,19 +268,19 @@ lemma hasDerivAt_marginR {x : ℝ} (hx : 1 < x) :
   have h1 := (hasDerivAt_t_div_log    (x := x) hx).const_mul ((1:ℝ)/3)
   have h2 := (hasDerivAt_t_div_log_sq (x := x) hx).const_mul C1Default
   unfold marginR
-  simpa [sub_eq_add_neg, mul_comm, mul_left_comm, mul_assoc] using (h1.sub h2).sub_const (C2Default : ℝ)
+  simpa [sub_eq_add_neg, mul_comm, mul_left_comm, mul_assoc]
+    using (h1.sub h2).sub_const (C2Default : ℝ)
 
-/-! ## Reescrita em `L = log x` e positividade -/
+/-! ## Reescrita em `L = log x` e positividade (caso 1/3) -/
 
 noncomputable def Nnum (L : ℝ) : ℝ :=
   ((1:ℝ)/3) * L^2 - ((71:ℝ)/15) * L + (44:ℝ)/5
 
-/-- Fatoração auxiliar de `Nnum`. -/
 lemma Nnum_factor (L : ℝ) :
   Nnum L = ((1:ℝ)/3) * (L - 12) * (L - (11:ℝ)/5) := by
   unfold Nnum; ring
 
-/-- Para `L ≥ 12`, tem-se `Nnum L ≥ 0`. -/
+
 lemma Nnum_nonneg_of_ge_12 {L : ℝ} (hL : (12:ℝ) ≤ L) : 0 ≤ Nnum L := by
   have h1 : 0 ≤ L - 12 := sub_nonneg.mpr hL
   have h2 : 0 ≤ L - (11:ℝ)/5 := by
@@ -278,6 +289,7 @@ lemma Nnum_nonneg_of_ge_12 {L : ℝ} (hL : (12:ℝ) ≤ L) : 0 ≤ Nnum L := by
   have hfac := Nnum_factor L
   simpa [hfac, mul_comm, mul_left_comm, mul_assoc] using
     mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ (1:ℝ)/3) h1) h2
+
 
 /-- Mostra `log(10^6) ≥ 12` usando `exp 1 < 3` e \((\exp 1)^{12} \le 3^{12} \le 10^6\). -/
 lemma log_1e6_ge_12 : (12 : ℝ) ≤ Real.log (1000000 : ℝ) := by
@@ -343,10 +355,10 @@ lemma deriv_marginR_nonneg_of_ge_1e6 {x : ℝ} (hx : (1000000 : ℝ) ≤ x) :
   rw [hrepr]
   exact hge
 
-/-! ## Monotonicidade em `ℝ` e transporte para `ℕ` (via MVT) -/
 
-/-- Para `m ≥ 10^6`, `marginR (m+1) ≥ marginR m`. Usa o MVT com derivada não negativa
-no intervalo `[m, m+1]`. -/
+
+/-! ## Monotonicidade em `ℝ` e transporte para `ℕ` (caso 1/3) -/
+
 lemma marginR_succ_ge (m : ℕ) (hm : 1_000_000 ≤ m) :
   marginR (m+1) ≥ marginR m := by
   have hx : (1000000 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
@@ -362,7 +374,8 @@ lemma marginR_succ_ge (m : ℕ) (hm : 1_000_000 ≤ m) :
           ( ((1:ℝ)/3) * ((Real.log x - 1) / (Real.log x)^2)
             - C1Default * ((Real.log x - 2) / (Real.log x)^3) ) x := by
     intro x hxI
-    have : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num : (1:ℝ) < (1000000 : ℝ)) (le_trans hx hxI.1)
+    have : (1 : ℝ) < x :=
+      lt_of_lt_of_le (by norm_num : (1:ℝ) < (1000000 : ℝ)) (le_trans hx hxI.1)
     exact hasDerivAt_marginR this
   let g : ℝ → ℝ :=
     fun x =>
@@ -370,7 +383,8 @@ lemma marginR_succ_ge (m : ℕ) (hm : 1_000_000 ≤ m) :
         - C1Default * ((Real.log x - 2) / (Real.log x)^3)
   have hlt : (m : ℝ) < (m+1 : ℝ) := by exact_mod_cast Nat.lt_succ_self m
   rcases
-    exists_hasDerivAt_eq_slope (f := marginR) (f' := g) (a := (m : ℝ)) (b := (m+1 : ℝ)) (hab := hlt)
+    exists_hasDerivAt_eq_slope (f := marginR) (f' := g)
+      (a := (m : ℝ)) (b := (m+1 : ℝ)) (hab := hlt)
       (hfc := fun x hx => (hdiff x hx).continuousAt.continuousWithinAt)
       (hff' := fun x hx => hdiff x ⟨hx.1.le, hx.2.le⟩)
     with ⟨c, hc, hEq⟩
@@ -387,12 +401,6 @@ lemma marginR_succ_ge (m : ℕ) (hm : 1_000_000 ≤ m) :
 ------------------------------------------------------------------------------
 Bloco 1: caso base `m = 10^6`
 ------------------------------------------------------------------------------
-
-Objetivo: provar `margin m ≥ 1` para `m ≥ 10^6`.
-
-1. Passo base numérico em `m = 10^6` (a partir de cotas explícitas para `log(10^6)`).
-2. Monotonicidade de `margin` a partir de `10^6` (via MVT em `marginR`).
-------------------------------------------------------------------------------
 -/
 
 /-- `margin` é não decrescente para `m ≥ 10^6` (em `ℕ`). -/
@@ -407,13 +415,14 @@ lemma margin_mono_from_1e6 {m n : ℕ}
 
 /-! ### Caso base em `m = 10^6` (via `Log10Bounds`) -/
 
+
 /-- Caso base: `margin 10^6 ≥ 1`. Usa `log_1e6_bounds`. -/
 lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
   obtain ⟨hLlo, hLhi⟩ := log_1e6_bounds   -- (69/5) ≤ log(1e6) ≤ (693/50)
   unfold margin
-  -- Termo A: `m/(3 log m)` é minimizado substituindo `log m` por `Lhi`
   have hlogpos : 0 < Real.log (1_000_000 : ℝ) :=
     log_pos_of_ge_two (by decide : (2:ℕ) ≤ 1_000_000)
+  -- Termo A
   have A_ge :
       ((1_000_000 : ℝ) / Real.log (1_000_000 : ℝ)) * ((1 : ℝ)/3)
         ≥ (1_000_000 : ℝ) / (3 * ((693 : ℝ) / 50)) := by
@@ -421,7 +430,7 @@ lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
       one_div_le_one_div_of_le hlogpos hLhi
     have := mul_le_mul_of_nonneg_left h_inv (by norm_num : 0 ≤ (1_000_000 : ℝ) / 3)
     simpa [one_div, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using this
-  -- Termo B: `C1 * m/(log m)^2` é maximizado substituindo `log m` por `Llo`
+  -- Termo B
   have CB_le :
       C1Default * ((1_000_000 : ℝ) / (Real.log (1_000_000 : ℝ))^2)
         ≤ C1Default * ((1_000_000 : ℝ) / (((69 : ℝ) / 5)^2)) := by
@@ -443,7 +452,7 @@ lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
       simpa [C1Default_def] using (by norm_num : (0:ℝ) ≤ (22:ℝ)/5)
     have := mul_le_mul_of_nonneg_left B_le hC1
     simpa [one_div, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using this
-  -- Consolidação numérica final
+  -- Consolidação
   have base_bound :
       ((1_000_000 : ℝ) / Real.log (1_000_000 : ℝ)) * ((1 : ℝ)/3)
         - C1Default * ((1_000_000 : ℝ) / (Real.log (1_000_000 : ℝ))^2)
@@ -462,7 +471,6 @@ lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
         - ( C1Default * ((1_000_000 : ℝ) / (((69 : ℝ) / 5)^2)) )
         - (C2Default : ℝ) ≥ 1 := by
     have hAint : (24050 : ℝ) ≤ (1_000_000 : ℝ) / (3 * ((693 : ℝ) / 50)) := by norm_num
-    have hBint := B_int
     have hCval : (C2Default : ℝ) = 100 := by simp [C2Default_def]
     calc
       1 ≤ (24050 - 23105 - 100 : ℝ) := by norm_num
@@ -470,26 +478,21 @@ lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
       _ ≤ ( (1_000_000 : ℝ) / (3 * ((693 : ℝ) / 50)) )
            - ( C1Default * ((1_000_000 : ℝ) / (((69 : ℝ) / 5)^2)) )
            - (C2Default : ℝ) := by
-        have ha : (24050 : ℝ) ≤ _ := hAint
-        have hb : _ ≤ (23105 : ℝ) := hBint
         have hsub : (24050 : ℝ) - (23105 : ℝ) ≤
           ((1_000_000 : ℝ) / (3 * ((693 : ℝ) / 50))) -
           (C1Default * ((1_000_000 : ℝ) / (((69 : ℝ) / 5)^2))) :=
-          sub_le_sub ha hb
+          sub_le_sub hAint B_int
         simpa using hsub
   exact le_trans rhs_ge base_bound
 
-/-- Caso base: `margin 10⁶ ≥ 1`. -/
-theorem margin_ge_one_at_1e6 : margin 1_000_000 ≥ 1 := by
-  exact margin_base_1e6
 
-/-- Propagação monótona do caso base: se `m ≥ 10⁶`, então `margin m ≥ 1`. -/
+theorem margin_ge_one_at_1e6 : margin 1_000_000 ≥ 1 := margin_base_1e6
+
 theorem margin_ge_one_from_1e6 :
   ∀ m : ℕ, m ≥ 1_000_000 → margin m ≥ 1 := by
   intro m hm
   have mono := margin_mono_from_1e6 (m := 1_000_000) (n := m) (by decide) hm
-  have hbase : margin 1_000_000 ≥ 1 := margin_ge_one_at_1e6
-  exact le_trans hbase mono
+  exact le_trans margin_ge_one_at_1e6 mono
 
 /-- Faixa formal: para `m ≥ 10⁶` e `x ≤ 8`, vale `LB m x ≥ 1`. -/
 theorem budget_conservative_formal
@@ -499,6 +502,210 @@ theorem budget_conservative_formal
       (hm := le_trans (by decide : U0Default ≤ 1_000_000) hm) hx
   have h₁ : margin m ≥ 1 := margin_ge_one_from_1e6 m hm
   exact ge_trans h₀ h₁
+
+
+/-! ###############  Margem “do paper” (C₁=4.4, C₂=100)  PARA 18794 ############### -/
+
+/-- Margem analítica usada no paper:
+    `(m/log m)*(1/2) - C1*(m/log^2 m) - 2/log^2 m - C2`. -/
+noncomputable def marginPaper (m : ℕ) : ℝ :=
+  ((m : ℝ) / Real.log (m : ℝ)) * ((1 : ℝ)/2)
+  - C1Default * ((m : ℝ) / (Real.log (m : ℝ))^2)
+  - (2 : ℝ) / (Real.log (m : ℝ))^2
+  - (C2Default : ℝ)
+
+/-- Versão em `ℝ` para derivada/monotonicidade. -/
+noncomputable def marginRPaper (t : ℝ) : ℝ :=
+  ((1 : ℝ) / 2) * (t / Real.log t)
+  - C1Default * (t / (Real.log t)^2)
+  - (2 : ℝ) / (Real.log t)^2
+  - (C2Default : ℝ)
+
+@[simp] lemma marginPaper_coe (m : ℕ) : marginPaper m = marginRPaper (m : ℝ) := by
+  simp [marginPaper, marginRPaper, div_eq_mul_inv, pow_two,
+        mul_comm, mul_left_comm, mul_assoc]
+
+/-! #### Derivada de `1/(log t)^2` via `(log t)⁻¹` e potência -/
+
+
+
+
+private lemma hasDerivAt_inv_log_sq {x : ℝ} (hx : 1 < x) :
+  HasDerivAt (fun t : ℝ => (1 : ℝ) / (Real.log t)^2)
+             ( - (2 : ℝ) / (x * (Real.log x)^3) ) x := by
+  -- básicos
+  have hx0 : 0 < x := lt_trans one_pos hx
+  have hlog : HasDerivAt Real.log ((1 : ℝ)/x) x := by
+    simpa [one_div] using Real.hasDerivAt_log (ne_of_gt hx0)
+  have hlog_pos : 0 < Real.log x := (Real.log_pos_iff (le_of_lt hx0)).2 hx
+  have hlog_ne : Real.log x ≠ 0 := ne_of_gt hlog_pos
+
+  -- g(t) = (log t)^2
+  have hg : HasDerivAt (fun t : ℝ => (Real.log t)^2)
+      (2 * Real.log x * ((1 : ℝ) / x)) x := by
+    simpa [pow_two, two_mul, mul_comm, mul_left_comm, mul_assoc]
+      using (HasDerivAt.pow hlog 2)
+
+  -- (g t)⁻¹ com g x ≠ 0
+  have hg_ne : (Real.log x)^2 ≠ 0 := pow_ne_zero 2 hlog_ne
+  have hInv' :
+      HasDerivAt (fun t : ℝ => ((Real.log t)^2)⁻¹)
+        (-(2 * Real.log x * ((1 : ℝ) / x)) / ((Real.log x)^2)^2) x := by
+    simpa using hg.inv hg_ne
+
+  -- reescreve a função-alvo
+  have hfun :
+      (fun t : ℝ => (1 : ℝ) / (Real.log t)^2)
+        = (fun t : ℝ => ((Real.log t)^2)⁻¹) := by
+    funext t; simp [one_div]
+
+  -- simplifica o valor da derivada
+  have hval :
+      -(2 * Real.log x * x⁻¹) / (Real.log x ^ 2) ^ 2
+        = - (2 : ℝ) / (x * Real.log x ^ 3) := by
+    -- usa x ≠ 0 e log x ≠ 0 que já estão no contexto
+    field_simp [one_div, inv_eq_one_div, pow_two, pow_three, pow_mul,
+      mul_comm, mul_left_comm, mul_assoc]
+
+  simpa [hval] using hInv'
+
+
+
+
+
+/-- Derivada de `marginRPaper`. -/
+private lemma hasDerivAt_marginRPaper {x : ℝ} (hx : 1 < x) :
+    HasDerivAt marginRPaper
+      ( ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
+        - C1Default * ((Real.log x - 2) / (Real.log x)^3)
+        + (4 : ℝ) / (x * (Real.log x)^3) ) x := by
+  have h1 := (hasDerivAt_t_div_log (x := x) hx).const_mul ((1:ℝ)/2)
+  have h2 := (hasDerivAt_t_div_log_sq (x := x) hx).const_mul C1Default
+  have h3 := (hasDerivAt_inv_log_sq (x := x) hx).const_mul (2 : ℝ)
+  let C2 : ℝ := C2Default
+  have H : HasDerivAt (fun x => (1/2)*(x/Real.log x) - C1Default*(x/(Real.log x)^2) - 2*(1/(Real.log x)^2) - C2)
+                      ((1/2)*((Real.log x - 1)/(Real.log x)^2) - C1Default*((Real.log x - 2)/(Real.log x)^3) - 2*(-2/(x*(Real.log x)^3))) x :=
+    ((h1.sub h2).sub h3).sub_const C2
+  have func_eq : (fun x => (1/2)*(x/Real.log x) - C1Default*(x/(Real.log x)^2) - 2*(1/(Real.log x)^2) - C2) = marginRPaper := by
+    unfold marginRPaper
+    ext x
+    ring
+  have deriv_eq : ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2) - C1Default * ((Real.log x - 2) / (Real.log x)^3) - 2 * (-2 / (x * (Real.log x)^3))
+               = ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2) - C1Default * ((Real.log x - 2) / (Real.log x)^3) + (4 : ℝ) / (x * (Real.log x)^3) := by
+    ring
+  rw [func_eq, deriv_eq] at H
+  exact H
+
+/-! #### Quadrática que controla o sinal da derivada (dropando o termo positivo) -/
+
+-- Mnum(L) = 1/2 L^2 - 49/10 L + 44/5   (≥ 0 para L ≥ 8)
+noncomputable def Mnum (L : ℝ) : ℝ :=
+  ((1:ℝ)/2) * L^2 - ((49:ℝ)/10) * L + (44:ℝ)/5
+
+private lemma Mnum_nonneg_of_ge_8 {L : ℝ} (hL : (8:ℝ) ≤ L) : 0 ≤ Mnum L := by
+  have hdiff : Mnum L - Mnum 8 = (L - 8) * (L/2 - (9:ℝ)/10) := by
+    unfold Mnum; ring
+  have h1 : 0 ≤ L - 8 := sub_nonneg.mpr hL
+  have hL_div : (9:ℝ)/10 ≤ L/2 := by linarith
+  have h2 : 0 ≤ L/2 - (9:ℝ)/10 := sub_nonneg.mpr hL_div
+  have hprod : 0 ≤ (L - 8) * (L/2 - (9:ℝ)/10) := mul_nonneg h1 h2
+  have h8 : Mnum 8 = (8:ℝ)/5 := by
+    unfold Mnum; norm_num
+  have hsum : Mnum L = (L - 8) * (L/2 - (9:ℝ)/10) + Mnum 8 := by
+    linarith [hdiff]
+  have hM8 : 0 ≤ Mnum 8 := by rw [h8]; norm_num
+  rw [hsum]
+  exact add_nonneg hprod hM8
+
+/-! #### Derivada não-negativa quando `log x ≥ 8` (usamos `x ≥ 2981`) -/
+
+private lemma deriv_marginRPaper_nonneg_of_ge_2981 {x : ℝ} (hx : (2981 : ℝ) ≤ x) :
+  0 ≤ ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
+        - C1Default * ((Real.log x - 2) / (Real.log x)^3)
+        + (4 : ℝ) / (x * (Real.log x)^3) := by
+  have hx1 : 1 < x := lt_of_lt_of_le (by norm_num : (1:ℝ) < 2981) hx
+  have hx0 : 0 < x := lt_trans one_pos hx1
+  have hL8 : (8 : ℝ) ≤ Real.log x :=
+    RoughBlocks.Heavy.Log10Bounds.log_ge_8_of_ge_2981 hx
+  have hxlog_pos : 0 < Real.log x :=
+    (Real.log_pos_iff (le_of_lt hx0)).2 hx1
+  have hxlog_ne : Real.log x ≠ 0 := ne_of_gt hxlog_pos
+
+  -- (1) reescreve o bloco racional como Mnum(log x) / (log x)^3
+  have h₁ :
+    ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
+      - C1Default * ((Real.log x - 2) / (Real.log x)^3)
+      =
+    ( ((1:ℝ)/2) * ((Real.log x - 1) * Real.log x)
+        - C1Default * (Real.log x - 2) ) / (Real.log x)^3 := by
+    field_simp [pow_two, pow_three, hxlog_ne]
+  have h₂ :
+    ((1:ℝ)/2) * ((Real.log x - 1) * Real.log x) - C1Default * (Real.log x - 2)
+      = Mnum (Real.log x) := by
+    unfold Mnum C1Default; ring
+  have hcalc :
+    ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
+      - C1Default * ((Real.log x - 2) / (Real.log x)^3)
+      = Mnum (Real.log x) / (Real.log x)^3 := by
+    rw [h₁, h₂]
+
+  -- (2) não-negatividade de cada parcela
+  have hden_pos : 0 < (Real.log x)^3 := by simpa [pow_three] using pow_pos hxlog_pos 3
+  have hmain : 0 ≤ Mnum (Real.log x) / (Real.log x)^3 :=
+    div_nonneg (Mnum_nonneg_of_ge_8 hL8) (le_of_lt hden_pos)
+  have hpos : 0 ≤ (4 : ℝ) / (x * (Real.log x)^3) := by
+    have : 0 < x * (Real.log x)^3 := mul_pos hx0 hden_pos
+    exact div_nonneg (by norm_num) (le_of_lt this)
+
+  -- (3) soma e reescreve
+  have Hsum : 0 ≤ Mnum (Real.log x) / (Real.log x)^3 + (4 : ℝ) / (x * (Real.log x)^3) :=
+    add_nonneg hmain hpos
+  rw [← hcalc] at Hsum
+  exact Hsum
+
+/-- Passo discreto (MVT) a partir de `2981`: `marginRPaper (m+1) ≥ marginRPaper m`. -/
+private lemma marginRPaper_succ_ge_from_2981 (m : ℕ) (hm : 2981 ≤ m) :
+  marginRPaper (m+1) ≥ marginRPaper m := by
+  have hxM : (2981 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  let g : ℝ → ℝ :=
+    fun x =>
+      ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
+        - C1Default * ((Real.log x - 2) / (Real.log x)^3)
+        + (4 : ℝ) / (x * (Real.log x)^3)
+  have hlt : (m : ℝ) < (m+1 : ℝ) := by exact_mod_cast Nat.lt_succ_self m
+  rcases
+    exists_hasDerivAt_eq_slope
+      (f := marginRPaper) (f' := g) (a := (m : ℝ)) (b := (m+1 : ℝ)) (hab := hlt)
+      (hfc := fun x hx =>
+        (hasDerivAt_marginRPaper (x := x)
+          (lt_of_lt_of_le (by norm_num : (1:ℝ) < 2981)
+              (le_trans hxM hx.1))).continuousAt.continuousWithinAt)
+      (hff' := fun x hx =>
+        hasDerivAt_marginRPaper (x := x)
+          (lt_of_lt_of_le (by norm_num : (1:ℝ) < 2981)
+              (le_trans hxM (le_of_lt hx.1))))
+    with ⟨c, hc, hEq⟩
+  have hnonneg : 0 ≤ g c := by
+    have hcIcc : c ∈ Icc (m:ℝ) (m+1:ℝ) := ⟨hc.1.le, hc.2.le⟩
+    have h2981c : (2981 : ℝ) ≤ c := le_trans hxM hcIcc.1
+    simpa [g] using deriv_marginRPaper_nonneg_of_ge_2981 h2981c
+  have hΔ : 0 ≤ marginRPaper (m+1) - marginRPaper m := by
+    have hstep : 0 ≤ ((m+1 : ℝ) - (m : ℝ)) := by norm_num
+    simpa [hEq] using mul_nonneg hstep hnonneg
+  simpa [sub_eq_add_neg] using (le_of_sub_nonneg hΔ)
+
+/-- **Monotonicidade discreta a partir do limiar da ponte (18794).** -/
+lemma marginPaper_mono_from_18794 {m n : ℕ}
+  (hm : BridgeThreshold ≤ m) (hmn : m ≤ n) :
+  marginPaper m ≤ marginPaper n := by
+  have h2981 : 2981 ≤ m := le_trans (by decide : 2981 ≤ BridgeThreshold) hm
+  induction' hmn with k hk ih
+  · rfl
+  · have hk' : 2981 ≤ k := le_trans h2981 hk
+    have step := marginRPaper_succ_ge_from_2981 k hk'
+    have step' : marginPaper k ≤ marginPaper (k+1) := by
+      simpa [marginPaper_coe] using step
+    exact le_trans ih step'
 
 end Numeric
 end RoughBlocks.Heavy

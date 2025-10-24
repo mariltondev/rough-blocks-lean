@@ -7,6 +7,8 @@ namespace RoughBlocks.External.Certs
 --  - existem 9 linhas (x = 0..8)
 --  - deltaLo = 0 em cada linha (margem nula, sem negativos)
 
+open RoughBlocks.External.Certs.UniformGE18794Bridge
+
 private def allRowsAre0to8 : Bool :=
   match rows18794 with
   | [r0,r1,r2,r3,r4,r5,r6,r7,r8] =>

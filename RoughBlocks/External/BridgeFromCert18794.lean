@@ -22,6 +22,7 @@ namespace RoughBlocks.External
 open RoughBlocks RoughBlocks.Heavy
 open RoughBlocks.External.Certs
 open RoughBlocks.External.Certs.FullVerifier
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-- util: caracterização de `a && b = true` para `Bool`. -/
 private lemma bool_and_eq_true {a b : Bool} :

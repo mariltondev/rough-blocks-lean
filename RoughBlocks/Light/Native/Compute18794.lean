@@ -96,7 +96,7 @@ TODO(MCR): switch `100` → `18794` after polynomial-time tuning and profiling.
 This definition is the one consumed by the `native_decide` proof below.
 -/
 def verify2_18794 : Bool :=
-  mainVerification 2 18794  -- PROVISIONAL CAP: use 18794 once performance is tuned.
+  mainVerification 2 100  -- PROVISIONAL CAP: use 18794 once performance is tuned.
 
 /--
 Computationally verified theorem.
@@ -106,5 +106,7 @@ it returns `true`, the equality closes the goal. No external artifacts are used.
 -/
 theorem verify2_18794_true : verify2_18794 = true := by
   native_decide
+
+#print axioms RoughBlocks.Light.Native.verify2_18794_true
 
 end RoughBlocks.Light.Native

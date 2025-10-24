@@ -9,6 +9,7 @@ import RoughBlocks.External.Certs.UniformLB18794
 namespace RoughBlocks.External.Certs
 
 open RoughBlocks RoughBlocks.Heavy
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-- alvo do projeto -/
 def m0 : ℕ := 18794
