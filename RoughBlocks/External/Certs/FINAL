@@ -1,0 +1,124 @@
+Pronto. Já temos 1 a 3.
+Consegue fazer o 4 ?
+
+
+	1.	Constantes & aritmética estática (fáceis)
+	•	Provar: U0Default ≤ BridgeThreshold ≤ m0, 2 ≤ m0, 10000 ≤ m0.
+	•	Tabela: ∀ x : Fin 9, uniformLB18794_finalLowerLo x > 1.
+Tudo 100% computacional (sem dor).
+	2.	Ponte “fL ≤ margin” (para todo m ≥ m0, todo x)
+	•	2.1 Base numérica: mostrar fL x (log m) ≤ margin m numa malha/forma que cubra todos m ≥ m0 (ou diretamente “para todo m”, se o margin já foi desenhado para majorar fL).
+	•	2.2 Se precisar, encapsular como um lemma único:
+
+fL_le_margin_ge_m0 : m0 ≤ m → ∀ x, fL x (log m) ≤ margin m
+
+
+	3.	Ponte “LB ≤ PhiDiff” (para todo m ≥ m0, todo x)
+	•	Usar o arcabouço da janela/bloco para obter:
+
+LB_le_PhiDiff_ge_m0 : m0 ≤ m → ∀ x, LB m x ≤ PhiDiffAt m x
+
+Usamos ==> 
+	Um certificado uniforme já no formato Lean
+Me mande (ou me diga o nome exato que já existe) de algo assim:
+
+structure UniformBridgeFrom_m0 : Prop :=
+(LB_le_PhiDiff :
+  ∀ {m x : ℕ}, m0 ≤ m → x ≤ 8 → LB m x ≤ PhiDiffAt m x)
+
+e um termo H : UniformBridgeFrom_m0.
+Com isso, junto a Parte 2 (LB ≥ 1 para m ≥ m0), fecho direto: PhiDiffAt ≥ LB ≥ 1. <==
+
+
+	•	(Se o projeto já tem “LB ≥ margin”, ótimo: combina com (2) para dar fL ≤ PhiDiff.)
+
+	4.	Montagem final (existência em cada bloco)
+	•	Com (2) e (3), aplicar o teorema de contagem do bloco e concluir:
+
+∀ m ≥ m0, ∀ x : Fin 9, ∃ k ∈ K m x, mRough m k
+
+
+	•	Versão “1 por bloco”: também sai como corolário.
+
+Essencialmente, o gargalo está só nas Partes 2 e 3 (as duas pontes). O resto é rotineiro.
+
+
+
+
+
+
+Show! Pra fechar a Parte 3 (a ponte de LB para Φ), eu só preciso de um desses pacotes abaixo — qualquer um resolve:
+	1.	Um certificado uniforme já no formato Lean
+Me mande (ou me diga o nome exato que já existe) de algo assim:
+
+structure UniformBridgeFrom_m0 : Prop :=
+(LB_le_PhiDiff :
+  ∀ {m x : ℕ}, m0 ≤ m → x ≤ 8 → LB m x ≤ PhiDiffAt m x)
+
+e um termo H : UniformBridgeFrom_m0.
+Com isso, junto a Parte 2 (LB ≥ 1 para m ≥ m0), fecho direto: PhiDiffAt ≥ LB ≥ 1.
+
+	2.	Um lema único já pronto (sem o record), por exemplo:
+
+theorem LB_le_PhiDiff_uniform
+  : ∀ {m x : ℕ}, m0 ≤ m → x ≤ 8 → LB m x ≤ PhiDiffAt m x := by
+  native_decide -- (ou o que você já tiver)
+
+Qualquer nome serve; eu adapto. Preciso só saber como chamá-lo.
+
+	3.	Uma API mínima computacional
+Se preferir, pode ser um “oráculo” com booleans + decide:
+
+def okBridge (m x : ℕ) : Bool := decide (LB m x ≤ PhiDiffAt m x)
+lemma okBridge_correct {m x} (hm : m0 ≤ m) (hx : x ≤ 8)
+  : okBridge m x = true → LB m x ≤ PhiDiffAt m x := by
+  -- pequeno wrapper; eu escrevo
+
+E aí você me passa lemma ok_all : ∀ m≥m0 ∀ x≤8, okBridge m x = true.
+
+⸻
+
+Extra (opcionais, mas ajudam)
+	•	Um fato básico já disponível: x ≤ 8 → ok (eu uso nos wrappers).
+	•	O nome exato do seu countRoughInBlock_eq_phiDiff_succ_real (já usei antes).
+	•	Se m0 = 18794, posso especializar e enunciar a versão “≥ 18794” direto.
+
+Com (1) ou (2) eu consigo fechar a Parte 3 imediatamente, sem imports novos e sem admit.
+
+
+
+
+Use este como ponto de entrada (assumindo que você já tem H : UniformBridgeFrom_m0 da Parte 03):
+
+RoughBlocks.External.Certs.exists_allNine_ge_m0_using_uniformBridge
+  (H  : UniformBridgeFrom_m0)
+  {m  : ℕ} (hm : m0 ≤ m) (x : Fin 9) :
+  ∃ k ∈ K m (x : ℕ), mRough m k
+
+Se quiser evitar passar H toda vez, use o wrapper que fixa o certificado da Parte 03 (H_uniformBridgeFrom_m0):
+
+RoughBlocks.External.Certs.exists_allNine_ge_m0_using_uniformBridge_auto
+  {m : ℕ} (hm : m0 ≤ m) (x : Fin 9) :
+  ∃ k ∈ K m (x : ℕ), mRough m k
+
+Versão “contagem ≥ 1” (em vez de existencial):
+
+RoughBlocks.External.Certs.one_per_block_ge_m0_using_uniformBridge
+  (H  : UniformBridgeFrom_m0)
+  {m : ℕ} (hm : m0 ≤ m) (x : Fin 9) :
+  1 ≤ ((K m (x : ℕ)).filter (mRough m)).card
+
+Exemplo mínimo de uso:
+
+import RoughBlocks.External.Certs.Parte03
+import RoughBlocks.External.Certs.Parte04
+
+open RoughBlocks.External.Certs
+
+example {m : ℕ} (hm : m0 ≤ m) (x : Fin 9) :
+    ∃ k ∈ K m (x : ℕ), mRough m k :=
+  exists_allNine_ge_m0_using_uniformBridge_auto (m := m) hm x
+
+
+
+  

@@ -460,33 +460,33 @@ theorem phiDiff_ge_uniformLB_18794_ALL_nat (x : ℕ) (hx : x ≤ 8) :
 
 
 -- VERSÕES ARTERNATIVAS --
--- /-- Versão “ALL” em `m = m0` descendo de `rows` para o `uniformLB`. -/
--- theorem phiDiff_ge_uniformLB_18794_ALL (x : Fin 9) :
---     ((PhiGE (m0*m0 + (x:ℕ)*m0 + m0) (m0+1) : ℝ)
---      - (PhiGE (m0*m0 + (x:ℕ)*m0)       (m0+1) : ℝ))
---     ≥ (uniformLB18794_finalLowerLo x : ℝ) := by
---   -- Já provamos: Φ-dif ≥ rows(x)
---   have h_rows : ((PhiGE (m0*m0 + (x:ℕ)*m0 + m0) (m0+1) : ℝ)
---                  - (PhiGE (m0*m0 + (x:ℕ)*m0)       (m0+1) : ℝ))
---                 ≥ (finalLowerLo_of x : ℝ) :=
---     phiDiff_ge_row_finalLowerLo_18794_ALL x
---   -- E do “bridge” uniform: uniformLB(x) ≤ rows(x)
---   have h_cmp : (uniformLB18794_finalLowerLo x : ℝ) ≤ (finalLowerLo_of x : ℝ) :=
---     uniformLB_le_rows x
---   -- Conclusão por transitividade
---   exact le_trans h_cmp h_rows
+/-- Versão “ALL” em `m = m0` descendo de `rows` para o `uniformLB`. -/
+theorem phiDiff_ge_uniformLB_18794_ALL_2 (x : Fin 9) :
+    ((PhiGE (m0*m0 + (x:ℕ)*m0 + m0) (m0+1) : ℝ)
+     - (PhiGE (m0*m0 + (x:ℕ)*m0)       (m0+1) : ℝ))
+    ≥ (uniformLB18794_finalLowerLo x : ℝ) := by
+  -- Já provamos: Φ-dif ≥ rows(x)
+  have h_rows : ((PhiGE (m0*m0 + (x:ℕ)*m0 + m0) (m0+1) : ℝ)
+                 - (PhiGE (m0*m0 + (x:ℕ)*m0)       (m0+1) : ℝ))
+                ≥ (finalLowerLo_of x : ℝ) :=
+    phiDiff_ge_row_finalLowerLo_18794_ALL x
+  -- E do “bridge” uniform: uniformLB(x) ≤ rows(x)
+  have h_cmp : (uniformLB18794_finalLowerLo x : ℝ) ≤ (finalLowerLo_of x : ℝ) :=
+    uniformLB_le_rows x
+  -- Conclusão por transitividade
+  exact le_trans h_cmp h_rows
 
--- #print axioms RoughBlocks.External.Certs.phiDiff_ge_uniformLB_18794_ALL
+#print axioms RoughBlocks.External.Certs.phiDiff_ge_uniformLB_18794_ALL
 
 -- VERSÕES ARTERNATIVAS --
--- /-- Wrapper em ℕ: usa `x ≤ 8` para converter em `Fin 9`. -/
--- theorem phiDiff_ge_uniformLB_18794_ALL_nat (x : ℕ) (hx : x ≤ 8) :
---     ((PhiGE (m0*m0 + x*m0 + m0) (m0+1) : ℝ)
---      - (PhiGE (m0*m0 + x*m0)     (m0+1) : ℝ))
---     ≥ (uniformLB18794_finalLowerLo ⟨x, Nat.lt_succ_of_le hx⟩ : ℝ) := by
---   simpa using phiDiff_ge_uniformLB_18794_ALL ⟨x, Nat.lt_succ_of_le hx⟩
+/-- Wrapper em ℕ: usa `x ≤ 8` para converter em `Fin 9`. -/
+theorem phiDiff_ge_uniformLB_18794_ALL_nat_2 (x : ℕ) (hx : x ≤ 8) :
+    ((PhiGE (m0*m0 + x*m0 + m0) (m0+1) : ℝ)
+     - (PhiGE (m0*m0 + x*m0)     (m0+1) : ℝ))
+    ≥ (uniformLB18794_finalLowerLo ⟨x, Nat.lt_succ_of_le hx⟩ : ℝ) := by
+  simpa using phiDiff_ge_uniformLB_18794_ALL_2 ⟨x, Nat.lt_succ_of_le hx⟩
 
--- #print axioms RoughBlocks.External.Certs.phiDiff_ge_uniformLB_18794_ALL_nat
+#print axioms RoughBlocks.External.Certs.phiDiff_ge_uniformLB_18794_ALL_nat
 
 
 end RoughBlocks.External.Certs

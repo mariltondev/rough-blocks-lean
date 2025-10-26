@@ -54,6 +54,9 @@ lemma omegaLo_pos (x : Fin 9) : 0 < (omegaLo_q x : ℝ) := by
 @[inline] def PhiDiffAt (m : ℕ) (x : ℕ) : ℝ :=
   (PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ)
 
+  #print axioms RoughBlocks.External.Certs.UniformLB18794Bridge.PhiDiffAt
+  #check RoughBlocks.External.Certs.UniformLB18794Bridge.PhiDiffAt
+
 /-- atalho só pra enxugar a notação do Φ-dif no alvo `m0`. -/
 @[inline] def PhiDiff (x : ℕ) : ℝ :=
   ((PhiGE (m0*m0 + x*m0 + m0) (m0+1) : ℝ)
@@ -88,7 +91,7 @@ theorem phiDiff_ge_uniformLB_18794_all
 fun x => phiDiff_ge_uniformLB_18794_of_ge_two x (ge2_all x)
 
 /-- versão indexada por ℕ com `x ≤ 8`. -/
-theorem phiDiff_ge_uniformLB_18794_all_nat
+theorem phiDiff_ge_uniformLB_18794_all_nat_x
   (ge2_all : ∀ x : Fin 9, PhiDiff (x : ℕ) ≥ (2 : ℝ))
   (x : ℕ) (hx : x ≤ 8) :
   PhiDiff x ≥ (RoughBlocks.External.Certs.uniformLB18794_finalLowerLoOf x hx : ℝ) := by

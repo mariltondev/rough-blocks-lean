@@ -1,9 +1,11 @@
 import Mathlib
+import RoughBlocks.External.Certs.UniformGE18794Bridge
 import RoughBlocks.External.Certs.VerifyIncrement18794 -- Onde está rows18794 e a verificação de sanidade
 
 namespace RoughBlocks.External.Certs.FullVerifier
 
 open RoughBlocks.External.Certs
+open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-!
 ### Auditoria de Cálculo

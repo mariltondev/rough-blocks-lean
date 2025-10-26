@@ -1,3 +1,13 @@
+Isabelle/HOL – “Nine Chapters of Analytic Number Theory” (AFP). É um corpo grande cobrindo muito do Apostol (Dirichlet séries, assintótica, técnicas analíticas), e costuma ser a referência pública mais próxima do tipo de prova que você está montando (mas não tem Buchstab/Φ do jeito que você usa). 
+
+
+
+lemma phiDiff_ge_from_18794
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
+  ((PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ))
+  ≥ ((PhiGE (18794*18794 + x*18794 + 18794) (18794+1) : ℝ)
+     - (PhiGE (18794*18794 + x*18794) (18794+1) : ℝ))
+
 perfeito — vamos cravar o plano da Opção 2 (3 tarefas), usando o corte em 18 794:
 	•	faixa finita: 2 \le m \le 18\,793 → técnica 1 (certificado JSON verificável em Lean, sem axioma);
 	•	ponte analítica: m \ge 18\,794 → nova ponte uniforme (mesma ideia da atual, só que começando em 18 794);
@@ -296,6 +306,8 @@ xx
 caffeinate -dimsu env LAKE_JOBS=8 lake -v build RoughBlocks.Light.Native.Compute18794 
 caffeinate -dimsu env LAKE_JOBS=1 time lake -v build RoughBlocks.Light.Native.Compute18794
 caffeinate -dimsu env LAKE_JOBS=1 time lake build RoughBlocks.Light.Native.Compute18794
+
+caffeinate -dimsu env LAKE_JOBS=1 time lake build MonotoneLB smoke 
 
 
 
