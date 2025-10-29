@@ -41,20 +41,20 @@ def uniform_bridge_certificate_parte3_json : String :=
   \"type\":\"uniform_bridge_domain_certificate\"
 }"
 
-/-!
-Shim provisório: troque por um verificador real quando estiver pronto.
--/
-axiom buildPlugFromJSON :
-  String →
-    (∀ {m : ℕ}, m0 ≤ m → ∀ x : Fin 9,
-      (uniformLB18794_finalLowerLo x : ℝ) ≤ PhiDiffAt m (x : ℕ))
+-- /-!
+-- Shim provisório: troque por um verificador real quando estiver pronto.
+-- -/
+-- axixom buildPlugFromJSON :
+--   String →
+--     (∀ {m : ℕ}, m0 ≤ m → ∀ x : Fin 9,
+--       (uniformLB18794_finalLowerLo x : ℝ) ≤ PhiDiffAt m (x : ℕ))
 
-/-- Plug uniforme exportado pela Parte 3:
-    `uniformLB(x) ≤ Φ(m,x)` para todo `m ≥ m0`. -/
-def Hplug_uniformLB :
-    ∀ {m : ℕ}, m0 ≤ m → ∀ x : Fin 9,
-      (uniformLB18794_finalLowerLo x : ℝ) ≤ PhiDiffAt m (x : ℕ) :=
-  buildPlugFromJSON uniform_bridge_certificate_parte3_json
+-- /-- Plug uniforme exportado pela Parte 3:
+--     `uniformLB(x) ≤ Φ(m,x)` para todo `m ≥ m0`. -/
+-- def Hplug_uniformLB :
+--     ∀ {m : ℕ}, m0 ≤ m → ∀ x : Fin 9,
+--       (uniformLB18794_finalLowerLo x : ℝ) ≤ PhiDiffAt m (x : ℕ) :=
+--   buildPlugFromJSON uniform_bridge_certificate_parte3_json
 
 end
 end RoughBlocks.External.Certs

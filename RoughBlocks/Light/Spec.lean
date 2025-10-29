@@ -78,8 +78,8 @@ namespace RoughBlocks.Light.Spec
 #print axioms RoughBlocks.External.bridge_ge_1e6_uniform
 #eval IO.println "-------------------------------------------------------------------"
 
-#eval IO.println " External axiom: budget_verified_by_scan (Zenodo deterministic scan)"
-#print axioms RoughBlocks.Light.budget_verified_by_scan
+-- #eval IO.println " External axiom: budget_verified_by_scan (Zenodo deterministic scan)"
+-- #print axioms RoughBlocks.Light.budget_verified_by_scan
 #eval IO.println "-------------------------------------------------------------------"
 
 end RoughBlocks.Light.Spec

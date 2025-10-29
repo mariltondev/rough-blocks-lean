@@ -426,7 +426,8 @@ theorem exists_mRough_in_allNine_from_18794
   rcases Finset.mem_filter.mp hk with ⟨hkK, hkR⟩
   exact ⟨k, hkK, hkR⟩
 
- -- #print axioms RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794
+-- #print axioms RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794
+-- #check RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794
 
 
 

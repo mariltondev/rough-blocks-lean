@@ -42,6 +42,52 @@ theorem main_theorem_ge_1e6 {m x : ℕ} (hm : 1_000_000 ≤ m) (hx : x ≤ 8) :
   LB m x ≥ 1 :=
   budget_conservative_formal (m := m) (x := x) hm hx
 
+
+
+
+theorem main_theorem_ge_1e6_forall :
+  ∀ m x, 1000000 ≤ m → x ≤ 8 → LB m x ≥ 1 :=
+by
+  intro m x hm hx
+  exact RoughBlocks.Light.main_theorem_ge_1e6 hm hx
+
+
+theorem main_theorem_ge_1e6_and :
+  ∀ m x, (1000000 ≤ m ∧ x ≤ 8) → LB m x ≥ 1 :=
+by
+  intro m x h
+  exact RoughBlocks.Light.main_theorem_ge_1e6 h.1 h.2
+
+
+
+theorem main_theorem_ge_1e6_ranges :
+  ∀ {m}, 1000000 ≤ m → ∀ {x}, x ≤ 8 → LB m x ≥ 1 :=
+by
+  intro m hm x hx
+  exact RoughBlocks.Light.main_theorem_ge_1e6 hm hx
+
+
+namespace RoughBlocks.Light
+
+theorem main_theorem_ge_1e6_ranges {m : ℕ} :
+  1000000 ≤ m → ∀ {x : ℕ}, x ≤ 8 → LB m x ≥ 1 :=
+by
+  intro hm x hx
+  exact main_theorem_ge_1e6 hm hx
+
+end RoughBlocks.Light
+
+
+
+
+
+#print axioms RoughBlocks.Light.main_theorem_ge_1e6_ranges
+#check RoughBlocks.Light.main_theorem_ge_1e6_ranges
+
+
+
+
+
 /-- Existência no bloco, ramo `m ≥ 10⁶`.
 Versão modular que assume apenas dois insumos:
 1. `hCountEq`: identificação da contagem no bloco com um número real `D`;

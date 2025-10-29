@@ -45,12 +45,12 @@ theorem of_block_to_interval_primes
 
 
 
-/-- Varredura determinística: para `2 ≤ m ≤ 10⁶` e `x ≤ 8`,
-há pelo menos um `m`-áspero no bloco `K m x`.
-Fonte: artefato computacional no Zenodo (DOI `10.5281/zenodo.17137291`). -/
-axiom budget_verified_by_scan
-  {m x : ℕ} (hm₂ : 2 ≤ m) (hm_top : m ≤ 1_000_000) (hx : x ≤ 8) :
-  RoughBlocks.countRoughInBlock m x ≥ 1
+-- /-- Varredura determinística: para `2 ≤ m ≤ 10⁶` e `x ≤ 8`,
+-- há pelo menos um `m`-áspero no bloco `K m x`.
+-- Fonte: artefato computacional no Zenodo (DOI `10.5281/zenodo.17137291`). -/
+-- axiom budget_verified_by_scan
+--   {m x : ℕ} (hm₂ : 2 ≤ m) (hm_top : m ≤ 1_000_000) (hx : x ≤ 8) :
+--   RoughBlocks.countRoughInBlock m x ≥ 1
 
 
 
