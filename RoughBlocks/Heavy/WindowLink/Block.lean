@@ -47,6 +47,10 @@ A ponte ocorre em três etapas padronizadas:
 namespace RoughBlocks.Heavy
 open Finset
 
+/-- Diferença `Φ` no bloco `x`, no nível `m`. -/
+@[inline] def PhiDiffAt (m : ℕ) (x : ℕ) : ℝ :=
+  (PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ)
+
 /-- **Forma canônica (bloco como janela).**
 Reescreve `countRoughInBlock m x` como o cardinal do filtro em
 `Icc (m^2 + x·m + 1) (m^2 + x·m + m)`. Útil para `simp`/normalizações. -/

@@ -7,6 +7,7 @@ import Mathlib
 import RoughBlocks.Defs
 import RoughBlocks.Heavy.Numeric
 import RoughBlocks.Heavy.WindowLink.Block
+import RoughBlocks.Heavy.Buchstab.Core
 
 /-!
 # Ponte 2 — de `LB` para `PhiDiffAt`
@@ -29,9 +30,9 @@ namespace RoughBlocks.Heavy
 open Real
 open RoughBlocks.Heavy.Numeric
 
-/-- Diferença telescópica de `PhiGE` correspondente ao bloco `K(m,x)` (caso `p := m+1`). -/
-@[inline] def PhiDiffAt (m x : ℕ) : ℝ :=
-  (PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ)
+-- /-- Diferença telescópica de `PhiGE` correspondente ao bloco `K(m,x)` (caso `p := m+1`). -/
+-- @[inline] def PhiDiffAt (m x : ℕ) : ℝ :=
+--   (PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ)
 
 /-! ## Teorema principal da Ponte 2 -/
 

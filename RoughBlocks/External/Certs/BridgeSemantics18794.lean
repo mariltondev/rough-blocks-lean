@@ -27,7 +27,8 @@ noncomputable section
 namespace RoughBlocks.External.Certs
 
 open RoughBlocks RoughBlocks.Heavy
-open RoughBlocks.External.Certs.UniformGE18794Bridge
+-- As definições `BridgeRow` e `rows18794` vivem em `RoughBlocks.External.Certs`.
+open RoughBlocks.External.Certs
 
 /-- Seleciona a linha `rows18794` correspondente a `x ≤ 8`. -/
 def row18794Of (x : ℕ) (hx : x ≤ 8) : BridgeRow :=
@@ -39,25 +40,24 @@ def row18794Of (x : ℕ) (hx : x ≤ 8) : BridgeRow :=
     simpa [hlen] using Nat.lt_of_le_of_lt hx (by decide : 8 < 9)
   rows18794.get ⟨x, hxlt⟩
 
--- /-- Axioma (semântica do certificado): na janela curta com `p := m+1`,
--- `PhiGE(X+Y,p) - PhiGE(X,p) ≥ finalLowerLo` da linha `x`.
 
--- Pré-condições: o verificador estrutural passou; `m ≥ 18794`, `x ≤ 8`.
--- -/
--- axixom phiDiff_ge_row_finalLowerLo_18794
---   (hcert : verifyIncrement18794 = true)
---   {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
---   let r := row18794Of x hx
---   ((PhiGE (m*m + x*m + m) (m+1) : ℝ)
---     - (PhiGE (m*m + x*m) (m+1) : ℝ)) ≥ (r.finalLowerLo : ℝ)
+/-- Axioma (semântica do certificado): na janela curta com `p := m+1`,
+`PhiGE(X+Y,p) - PhiGE(X,p) ≥ finalLowerLo` da linha `x`.
 
--- /-- Axioma (ligação `LB` → linha): o `LB m x` analítico é no máximo o
--- `finalLowerLo` da linha `x` do certificado para `m ≥ 18794`.
--- -/
--- axixom LB_le_row_finalLowerLo_18794
---   {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
---   let r := row18794Of x hx
---   (Numeric.LB m x : ℝ) ≤ (r.finalLowerLo : ℝ)
+Pré-condições: o verificador estrutural passou; `m ≥ 18794`, `x ≤ 8`. -/
+axiom phiDiff_ge_row_finalLowerLo_18794
+  (hcert : verifyIncrement18794 = true)
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
+  let r := row18794Of x hx
+  ((PhiGE (m*m + x*m + m) (m+1) : ℝ)
+    - (PhiGE (m*m + x*m) (m+1) : ℝ)) ≥ (r.finalLowerLo : ℝ)
+
+/-- Axioma (ligação `LB` → linha): o `LB m x` analítico é no máximo o
+`finalLowerLo` da linha `x` do certificado para `m ≥ 18794`. -/
+axiom LB_le_row_finalLowerLo_18794
+  {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
+  let r := row18794Of x hx
+  (Numeric.LB m x : ℝ) ≤ (r.finalLowerLo : ℝ)
 
 
 end RoughBlocks.External.Certs

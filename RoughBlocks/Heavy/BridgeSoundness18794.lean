@@ -2,14 +2,12 @@ import Mathlib
 import RoughBlocks.Heavy.Numeric
 import RoughBlocks.Heavy.WindowLink.Block
 import RoughBlocks.Heavy.Bridge
-import RoughBlocks.External.Certs.UniformGE18794Bridge
 import RoughBlocks.External.Certs.VerifyIncrement18794
 import RoughBlocks.External.Certs.FullVerifier
 import RoughBlocks.External.BridgeFromCert18794
 
 open RoughBlocks RoughBlocks.Heavy
 open RoughBlocks.External.Certs.FullVerifier
-open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 noncomputable section
 

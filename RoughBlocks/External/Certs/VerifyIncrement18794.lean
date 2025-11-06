@@ -7,7 +7,8 @@ namespace RoughBlocks.External.Certs
 --  - existem 9 linhas (x = 0..8)
 --  - deltaLo = 0 em cada linha (margem nula, sem negativos)
 
-open RoughBlocks.External.Certs.UniformGE18794Bridge
+-- As definições `BridgeRow` e `rows18794` vivem em `RoughBlocks.External.Certs`.
+open RoughBlocks.External.Certs
 
 private def allRowsAre0to8 : Bool :=
   match rows18794 with

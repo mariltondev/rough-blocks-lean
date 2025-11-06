@@ -1,95 +1,135 @@
--- /-
--- SPDX-License-Identifier: Apache-2.0
--- Copyright (c) 2025 Marilton Costa Ribeiro
+/-
+SPDX-License-Identifier: Apache-2.0
+Copyright (c) 2025 Marilton
+Part of the RoughBlocks project.
+-/
 
--- Part of the RoughBlocks project.
--- This file is licensed under the Apache License 2.0 (see LICENSE).
--- Docs/paper are under CC BY-NC-ND 4.0 (see LICENSE-docs-CC-BY-NC-ND).
--- -/
+import Mathlib
+import RoughBlocks.Heavy.Numeric
+import RoughBlocks.Heavy.WindowLink.Block
+import RoughBlocks.External.Certs.AllNine_Framework
+import RoughBlocks.External.Certs.UniformGE18794Bridge
+import RoughBlocks.External.Certs.UniformLB18794Monotonicity
+import RoughBlocks.External.BridgeFromCert18794
+import RoughBlocks.External.Certs.FullVerifier
+import RoughBlocks.Heavy.WindowLink.BridgeLBtoPhiDiff
+import RoughBlocks.Heavy.WindowLink.Bridge_fL_to_Margin
 
--- import Mathlib
--- import RoughBlocks.Heavy.Numeric
+noncomputable section
+open Classical Real
+open RoughBlocks
 
--- namespace RoughBlocks.Heavy
+namespace RoughBlocks.Heavy
 
--- open Real
--- open RoughBlocks.Heavy.Numeric
+/-- Parâmetro-alvo do projeto. -/
+def m0 : ℕ := 18794
 
--- /-! ## Definição de m0 e limiares -/
+lemma m0_ge_bridge_threshold : BridgeThreshold ≤ m0 := by decide
+lemma m0_ge_two              : 2 ≤ m0               := by decide
+lemma m0_ge_2981             : 2981 ≤ m0            := by decide
 
--- def m0 : ℕ := 18794
+@[simp] lemma coe_fin9_le_eight (x : Fin 9) : (x : ℕ) ≤ 8 :=
+  Nat.le_of_lt_succ x.is_lt
 
--- lemma m0_ge_bridge_threshold : BridgeThreshold ≤ m0 := by native_decide
--- lemma m0_ge_2981 : 2981 ≤ m0 := by native_decide
--- lemma m0_ge_two : 2 ≤ m0 := by native_decide
+/-- Atalho: a `PhiDiffAt` do `Heavy`. -/
+abbrev PhiDiff (m x : ℕ) : ℝ := RoughBlocks.Heavy.PhiDiffAt m x
 
--- /-! ## Lemas auxiliares usando certificação computacional -/
+/-! ## 1) Identidade `Heavy` ↔ `External.Certs` -/
 
--- /-- Prova que fL ≤ margin para m ≥ m0 usando certificação computacional -/
--- lemma your_fL_le_margin_lemma (m : ℕ) (x : Fin 9) (hm : m0 ≤ m) :
---     fL x (Real.log (m : ℝ)) ≤ margin m := by
---   -- Para m = m0, use verificação computacional
---   by_cases h : m = m0
---   · subst h
---     fin_cases x <;> native_decide
---   · -- Para m > m0, use monotonicidade + caso base
---     have hlt : m0 < m := Nat.lt_of_le_of_ne hm h
---     have hbase : fL x (Real.log (m0 : ℝ)) ≤ margin m0 := by
---       fin_cases x <;> native_decide
---     have hmono : fL x (Real.log (m0 : ℝ)) ≤ fL x (Real.log (m : ℝ)) :=
---       fL_mono_from_m0 x hm (vL_le_logm0_of_bound x (le_of_lt (vL_lt_five x)))
---     have hmargin : margin m0 ≤ margin m :=
---       margin_mono_from_1e6 (by unfold m0; decide) (by exact_mod_cast hm)
---     linarith
+lemma PhiDiff_heavy_eq_certs (m x : ℕ) :
+  PhiDiff m x = External.Certs.PhiDiffAt m x := rfl
 
--- /-- Prova que LB ≤ countRoughInBlock para m ≥ m0 usando certificação computacional -/
--- lemma your_LB_le_count_lemma (m : ℕ) (x : Fin 9) (hm : m0 ≤ m) :
---     LB m (x : ℕ) ≤ (RoughBlocks.countRoughInBlock m (x : ℕ) : ℝ) := by
---   -- Para m = m0, use verificação computacional
---   by_cases h : m = m0
---   · subst h
---     fin_cases x <;> native_decide
---   · -- Para m > m0, use o teorema assintótico
---     have hlt : m0 < m := Nat.lt_of_le_of_ne hm h
---     exact budget_conservative_formal (by exact_mod_cast hlt) (by omega)
+lemma PhiDiff_heavy_le_certs (m x : ℕ) :
+  PhiDiff m x ≤ External.Certs.PhiDiffAt m x := by
+  simp [PhiDiff_heavy_eq_certs m x]
 
--- /-! ## Provas completas de hF e hL -/
+/-! ## 2) Lema útil: margin ≤ marginPaper para m ≥ m0 --------------------- -/
+lemma margin_le_marginPaper_from_18794 (m : ℕ) (hm : m0 ≤ m) :
+  Numeric.margin m ≤ Numeric.marginPaper m := by
+  -- precisa de 2981 ≤ m (apesar do nome do lemma base)
+  have hm2981 : 2981 ≤ m := le_trans m0_ge_2981 hm
+  exact Numeric.margin_le_marginPaper_of_ge_two hm2981
 
--- theorem prove_hF {m : ℕ} (hm : m0 ≤ m) : ∀ (x : Fin 9), fL x (log ↑m) ≤ marginPaper m := by
---   intro x
---   have hBridge : BridgeThreshold ≤ m := le_trans m0_ge_bridge_threshold hm
---   have hm2 : 2 ≤ m := le_trans m0_ge_two hm
---   have hfL_le_margin : fL x (Real.log (m : ℝ)) ≤ margin m := your_fL_le_margin_lemma m x hm
---   have hmargin_le_marginPaper : margin m ≤ marginPaper m := by
---     have h2981 : 2981 ≤ m := le_trans m0_ge_2981 hm
---     exact margin_le_marginPaper_of_ge_two h2981
---   exact fL_le_marginPaper_from_18794 fL hBridge x hfL_le_margin hmargin_le_marginPaper
+/-! ## 3) Teorema principal (forma framework, consumindo hF e hL) ---------- -/
 
--- theorem prove_hL {m : ℕ} (hm : m0 ≤ m) : ∀ (x : Fin 9), Numeric.LB m ↑x ≤ PhiDiffAt m ↑x := by
---   intro x
---   have hm2 : 2 ≤ m := le_trans m0_ge_two hm
---   have hx : (x : ℕ) ≤ 8 := by have : (x : ℕ) < 9 := x.2; omega
---   have hLBcount : LB m (x : ℕ) ≤ (RoughBlocks.countRoughInBlock m (x : ℕ) : ℝ) :=
---     your_LB_le_count_lemma m x hm
---   exact LB_le_PhiDiff hm2 hx hLBcount
+/-- **Existência para `m ≥ 18794` nos 9 blocos** (forma framework).
 
--- /-! ## Teorema principal final -/
+Entradas:
+* `hF`: família computacional `External.Certs.fL x (log m) ≤ Numeric.margin m`;
+* `hL`: família analítica `Numeric.LB m x ≤ External.Certs.PhiDiffAt m x`.
 
--- /-- Teorema principal: para todo m ≥ 18794 e todo x ∈ {0,...,8},
--- existe um número m-áspero no bloco K(m,x). -/
--- theorem exists_mRough_complete {m : ℕ} (hm : m0 ≤ m) (x : Fin 9) :
---     ∃ k ∈ K m ↑x, mRough m k := by
---   have hF : ∀ (x : Fin 9), fL x (log ↑m) ≤ Numeric.marginPaper m := prove_hF hm
---   have hL : ∀ (x : Fin 9), Numeric.LB m ↑x ≤ PhiDiffAt m ↑x := prove_hL hm
---   exact exists_mRough_in_allNine_from_18794_drop_hmB hm hF hL x
+Saída: existe um `m`-áspero em `K(m, x)` para cada bloco `x`.
+-/
+theorem exists_mRough_from_18794
+    {m : ℕ} (hm : m0 ≤ m)
+    (hF : ∀ x : Fin 9, External.Certs.fL x (Real.log (m : ℝ)) ≤ Numeric.margin m)
+    (hL : ∀ x : Fin 9, Numeric.LB m (x : ℕ) ≤ External.Certs.PhiDiffAt m (x : ℕ))
+    (x : Fin 9) :
+    ∃ k ∈ K m (x : ℕ), mRough m k := by
+  -- Pré-condições formais do teorema externo
+  have hBridge : BridgeThreshold ≤ m := m0_ge_bridge_threshold.trans hm
+  have hm_ext : External.Certs.m0 ≤ m := by
+    have : External.Certs.m0 = m0 := by decide
+    simpa [this] using hm
+  -- Chamada direta ao teorema externo “all nine”
+  exact RoughBlocks.External.Certs.exists_mRough_in_allNine_from_18794
+    hBridge hm_ext hF hL x
 
+/-! ## 4) Helpers (se quiser derivar hL a partir de LB ≤ count) ------------- -/
 
+lemma hL_family_from_LB_count
+    {m : ℕ} (hm : m0 ≤ m)
+    (hLBcount :
+      ∀ x : Fin 9,
+        Numeric.LB m (x : ℕ) ≤ (RoughBlocks.countRoughInBlock m (x : ℕ) : ℝ)) :
+    ∀ x : Fin 9,
+      Numeric.LB m (x : ℕ) ≤ External.Certs.PhiDiffAt m (x : ℕ) := by
+  intro x
+  have hm2 : 2 ≤ m := m0_ge_two.trans hm
+  have hx : (x : ℕ) ≤ 8 := Nat.le_of_lt_succ x.is_lt
+  -- ponte 2 já pronta no módulo WindowLink
+  have h :=
+    RoughBlocks.Heavy.LB_le_PhiDiff (m := m) (x := (x : ℕ)) hm2 hx (hLBcount x)
+  simpa [PhiDiff_heavy_eq_certs m (x : ℕ)] using h
 
--- -- Verificar que o teorema principal não depende de axiomas adicionais
--- #print axioms RoughBlocks.Heavy.exists_mRough_complete
+/-- Família `LB ≤ count` produzida diretamente pelo certificado. -/
+lemma hLBcount_from_certificate
+    (m : ℕ) (hm : m0 ≤ m) :
+    ∀ x : Fin 9,
+      Numeric.LB m (x : ℕ) ≤ (RoughBlocks.countRoughInBlock m (x : ℕ) : ℝ) := by
+  intro x
+  -- recibo completo já verificado → igualdade a true
+  have hcert :
+    RoughBlocks.External.Certs.FullVerifier.verify_full_certificate = true :=
+    RoughBlocks.External.Certs.FullVerifier.full_certificate_is_valid
+  have hm₀ : (18794 : ℕ) ≤ m := by simpa [m0] using hm
+  have hx : (x : ℕ) ≤ 8 := coe_fin9_le_eight x
+  simpa using
+    RoughBlocks.External.bridge_ge_18794_from_verified_certificate hcert hm₀ hx
 
--- -- Verificar que compila sem errors
--- #check RoughBlocks.Heavy.exists_mRough_complete
+/-- Família `LB ≤ PhiDiffAt` derivada automaticamente do certificado uniforme. -/
+lemma hL_family_from_certificate
+    (m : ℕ) (hm : m0 ≤ m) :
+    ∀ x : Fin 9,
+      Numeric.LB m (x : ℕ) ≤ External.Certs.PhiDiffAt m (x : ℕ) :=
+  hL_family_from_LB_count (m := m) hm (hLBcount_from_certificate m hm)
 
+/-- Variante prática: parte apenas de `hLBcount` para construir `hL`
+    e instanciar o teorema externo. -/
+theorem exists_mRough_from_18794_of_LB_count
+    {m : ℕ} (hm : m0 ≤ m)
+    (hF : ∀ x : Fin 9, External.Certs.fL x (Real.log (m : ℝ)) ≤ Numeric.margin m)
+    (hLBcount :
+      ∀ x : Fin 9,
+        Numeric.LB m (x : ℕ) ≤ (RoughBlocks.countRoughInBlock m (x : ℕ) : ℝ))
+    (x : Fin 9) :
+    ∃ k ∈ K m (x : ℕ), mRough m k := by
+  have hL := hL_family_from_LB_count (m := m) hm hLBcount
+  exact exists_mRough_from_18794 hm hF hL x
 
--- end RoughBlocks.Heavy
+/-! ## 5) Sanity ----------------------------------------------------------- -/
+
+#print axioms exists_mRough_from_18794
+#check exists_mRough_from_18794
+
+end RoughBlocks.Heavy

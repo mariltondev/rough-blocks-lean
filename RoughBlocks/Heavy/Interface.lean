@@ -48,9 +48,9 @@ def BridgeThreshold : ℕ := 18794
 abbrev ExistsInBlock : Prop := ExistsInBlockStmt BridgeThreshold
 
 /-- Constantes das estimativas (alinhadas ao paper). -/
-def C0Default : ℝ := (2 : ℝ)
-noncomputable def C1Default : ℝ := ((22 : ℚ) / 5 : ℝ)
-def C2Default : ℕ := 100
+noncomputable def C0Default : ℝ := 2
+noncomputable def C1Default : ℝ := (22 : ℝ) / 5
+noncomputable def C2Default : ℝ := 100
 
 /--
 Contagem discreta na janela `(X, X+Y]`: número de `n` tais que

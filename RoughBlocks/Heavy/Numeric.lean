@@ -432,8 +432,6 @@ lemma margin_mono_from_1e6 {m n : ℕ}
     exact le_trans ih step'
 
 /-! ### Caso base em `m = 10^6` (via `Log10Bounds`) -/
-
-
 /-- Caso base: `margin 10^6 ≥ 1`. Usa `log_1e6_bounds`. -/
 lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
   obtain ⟨hLlo, hLhi⟩ := log_1e6_bounds   -- (69/5) ≤ log(1e6) ≤ (693/50)
@@ -502,7 +500,6 @@ lemma margin_base_1e6 : margin 1_000_000 ≥ 1 := by
           sub_le_sub hAint B_int
         simpa using hsub
   exact le_trans rhs_ge base_bound
-
 
 theorem margin_ge_one_at_1e6 : margin 1_000_000 ≥ 1 := margin_base_1e6
 
@@ -607,7 +604,7 @@ lemma LB_ge_marginPaper {m x : ℕ} (hm : m ≥ U0Default) (hx : x ≤ 8) :
 
 /-! #### Derivada de `1/(log t)^2` via `(log t)⁻¹` e potência -/
 
-private lemma hasDerivAt_inv_log_sq {x : ℝ} (hx : 1 < x) :
+lemma hasDerivAt_inv_log_sq {x : ℝ} (hx : 1 < x) :
   HasDerivAt (fun t : ℝ => (1 : ℝ) / (Real.log t)^2)
              ( - (2 : ℝ) / (x * (Real.log x)^3) ) x := by
   -- básicos
@@ -647,7 +644,7 @@ private lemma hasDerivAt_inv_log_sq {x : ℝ} (hx : 1 < x) :
   simpa [hval] using hInv'
 
 /-- Derivada de `marginRPaper`. -/
-private lemma hasDerivAt_marginRPaper {x : ℝ} (hx : 1 < x) :
+lemma hasDerivAt_marginRPaper {x : ℝ} (hx : 1 < x) :
     HasDerivAt marginRPaper
       ( ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
         - C1Default * ((Real.log x - 2) / (Real.log x)^3)
@@ -675,7 +672,7 @@ private lemma hasDerivAt_marginRPaper {x : ℝ} (hx : 1 < x) :
 noncomputable def Mnum (L : ℝ) : ℝ :=
   ((1:ℝ)/2) * L^2 - ((49:ℝ)/10) * L + (44:ℝ)/5
 
-private lemma Mnum_nonneg_of_ge_8 {L : ℝ} (hL : (8:ℝ) ≤ L) : 0 ≤ Mnum L := by
+lemma Mnum_nonneg_of_ge_8 {L : ℝ} (hL : (8:ℝ) ≤ L) : 0 ≤ Mnum L := by
   have hdiff : Mnum L - Mnum 8 = (L - 8) * (L/2 - (9:ℝ)/10) := by
     unfold Mnum; ring
   have h1 : 0 ≤ L - 8 := sub_nonneg.mpr hL
@@ -692,7 +689,7 @@ private lemma Mnum_nonneg_of_ge_8 {L : ℝ} (hL : (8:ℝ) ≤ L) : 0 ≤ Mnum L 
 
 /-! #### Derivada não-negativa quando `log x ≥ 8` (usamos `x ≥ 2981`) -/
 
-private lemma deriv_marginRPaper_nonneg_of_ge_2981 {x : ℝ} (hx : (2981 : ℝ) ≤ x) :
+lemma deriv_marginRPaper_nonneg_of_ge_2981 {x : ℝ} (hx : (2981 : ℝ) ≤ x) :
   0 ≤ ((1:ℝ)/2) * ((Real.log x - 1) / (Real.log x)^2)
         - C1Default * ((Real.log x - 2) / (Real.log x)^3)
         + (4 : ℝ) / (x * (Real.log x)^3) := by
@@ -737,7 +734,7 @@ private lemma deriv_marginRPaper_nonneg_of_ge_2981 {x : ℝ} (hx : (2981 : ℝ) 
   exact Hsum
 
 /-- Passo discreto (MVT) a partir de `2981`: `marginRPaper (m+1) ≥ marginRPaper m`. -/
-private lemma marginRPaper_succ_ge_from_2981 (m : ℕ) (hm : 2981 ≤ m) :
+lemma marginRPaper_succ_ge_from_2981 (m : ℕ) (hm : 2981 ≤ m) :
   marginRPaper (m+1) ≥ marginRPaper m := by
   have hxM : (2981 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
   let g : ℝ → ℝ :=
@@ -848,8 +845,11 @@ lemma margin_le_marginPaper_of_ge_two {m : ℕ} (hm : 2981 ≤ m) :
 -- Definições concretas para evitar variáveis livres
 def BridgeThreshold : ℕ := 18794
 def U0Default : ℕ := 2  -- Defina um valor concreto
-def C1Default : ℕ := 1  -- Defina um valor concreto
-def C2Default : ℕ := 1  -- Defina um valor concreto
+
+/-- Constantes das estimativas (alinhadas ao paper). -/
+noncomputable def C0Default : ℚ := 2
+noncomputable def C1Default : ℚ := (22 : ℚ) / 5
+noncomputable def C2Default : ℚ := 100
 
 def m0 : ℕ := 18794
 
@@ -864,7 +864,7 @@ def fL (x : Fin 9) (L : ℝ) : ℝ := 0
 -- def margin (m : ℕ) : ℝ := 0
 -- def marginPaper (m : ℕ) : ℝ := 0
 -- def LB (m x : ℕ) : ℝ := 0
-def PhiDiffAt (m x : ℕ) : ℝ := 0
+-- def PhiDiffAt (m x : ℕ) : ℝ := 0
 def K (m x : ℕ) : Finset ℕ := ∅
 def mRough (m k : ℕ) : Prop := True
 
@@ -877,10 +877,10 @@ lemma fL_le_marginPaper_from_18794 (fL : Fin 9 → ℝ → ℝ) {m : ℕ} (h : B
 -- lemma margin_le_marginPaper_of_ge_two {m : ℕ} (h : 2981 ≤ m) : margin m ≤ marginPaper m := by
 --   simp [margin, marginPaper]
 
-lemma LB_le_PhiDiff {m x : ℕ} (hm2 : 2 ≤ m) (hx : x ≤ 8)
-  (hLBcount : LB m x ≤ (0 : ℝ)) : LB m x ≤ PhiDiffAt m x := by
-  simp [PhiDiffAt]
-  exact hLBcount
+-- lemma LB_le_PhiDiff {m x : ℕ} (hm2 : 2 ≤ m) (hx : x ≤ 8)
+--   (hLBcount : LB m x ≤ (0 : ℝ)) : LB m x ≤ PhiDiffAt m x := by
+--   simp [PhiDiffAt]
+--   exact hLBcount
 
 
 end RoughBlocks.Heavy.Numeric

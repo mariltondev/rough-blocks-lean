@@ -14,6 +14,7 @@ Esta versão não usa `Numeric` nem `fL`/`vL`/`rows`.
 import Mathlib
 import RoughBlocks.Heavy.Interface
 import RoughBlocks.Heavy.WindowLink.Block
+import RoughBlocks.External.Certs.UniformLB18794Monotonicity
 
 --import RoughBlocks.External.Certs.Parte01
 --import RoughBlocks.External.Certs.Parte02

@@ -85,14 +85,18 @@ Depende apenas do adaptador `H : UniformBridgeFrom_m0` já provido pelos seus ce
 theorem exists_block_ge_18794_final_nat
   (H : UniformBridgeFrom_m0) {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
   ∃ k ∈ K m x, mRough m k := by
+  -- upgrade the natural block index into `Fin 9`
+  classical
+  have hx9 : x < 9 := Nat.lt_succ_of_le hx
   -- converte `x ≤ 8` em `Fin 9`
-  let x9 : Fin 9 := ⟨x, Nat.lt_succ_of_le hx⟩
+  let x9 : Fin 9 := ⟨x, hx9⟩
   -- aplica o teorema já provado na camada de Certs/Monotonicity
   obtain ⟨k, hkK, hkR⟩ :=
     exists_allNine_ge_18794_using_H (H := H) (m := m) (hm := hm) (x := x9)
       (h_m0_eq_18794 := rfl)
   -- adapta o tipo do índice de volta para `x : ℕ`
-  exact ⟨k, by simpa using hkK, hkR⟩
+  refine ⟨k, ?_, hkR⟩
+  simpa [x9] using hkK
 
 /-- Versão “todos os blocos de uma vez”: para `m ≥ 18794`, cada bloco tem pelo menos um `m`-áspero. -/
 theorem exists_allNine_ge_18794_final_nat

@@ -85,9 +85,6 @@ end RoughBlocks.Light
 #check RoughBlocks.Light.main_theorem_ge_1e6_ranges
 
 
-
-
-
 /-- Existência no bloco, ramo `m ≥ 10⁶`.
 Versão modular que assume apenas dois insumos:
 1. `hCountEq`: identificação da contagem no bloco com um número real `D`;

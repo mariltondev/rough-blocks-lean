@@ -5,7 +5,7 @@ import RoughBlocks.External.Certs.VerifyIncrement18794 -- Onde está rows18794 e
 namespace RoughBlocks.External.Certs.FullVerifier
 
 open RoughBlocks.External.Certs
-open RoughBlocks.External.Certs.UniformGE18794Bridge
+--open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-!
 ### Auditoria de Cálculo
@@ -38,5 +38,10 @@ def verify_full_certificate : Bool :=
 -- Este é o pilar da nossa ponte no lado computacional.
 theorem full_certificate_is_valid : verify_full_certificate = true := by
   native_decide -- Roda o auditor em todos os dados e confirma que o resultado é `true`.
+
+
+#print axioms RoughBlocks.External.Certs.FullVerifier.full_certificate_is_valid
+#check RoughBlocks.External.Certs.FullVerifier.full_certificate_is_valid
+
 
 end RoughBlocks.External.Certs.FullVerifier

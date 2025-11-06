@@ -26,12 +26,14 @@ namespace RoughBlocks.External
 open RoughBlocks RoughBlocks.Heavy
 open RoughBlocks.External.Certs
 open RoughBlocks.External.Certs.FullVerifier
-open RoughBlocks.External.Certs.UniformGE18794Bridge
+-- As definições do certificado (rows e campos) estão em `RoughBlocks.External.Certs`.
 
 /-- util: caracterização de `a && b = true` para `Bool`. -/
 private lemma bool_and_eq_true {a b : Bool} :
   (a && b = true) ↔ (a = true ∧ b = true) := by
   cases a <;> cases b <;> decide
+
+
 
 /-- Do recibo computacional e dos hooks semânticos,
 obtemos `Φ_GE(…)-Φ_GE(…) ≥ LB m x` para `m ≥ 18794`, `x ≤ 8`. -/
@@ -40,23 +42,31 @@ theorem phiDiff_ge_LB_from_cert_18794
   {m x : ℕ} (hm : 18794 ≤ m) (hx : x ≤ 8) :
   ((PhiGE (m*m + x*m + m) (m+1) : ℝ) - (PhiGE (m*m + x*m) (m+1) : ℝ))
     ≥ Numeric.LB m x := by
-  -- extrai a sanidade `verifyIncrement18794 = true` do recibo
+  -- certificado no formato esperado por `bool_and_eq_true`
   have hall_true :
-      verifyIncrement18794 && (rows18794.all verify_row_calculations) = true := by
+      (verifyIncrement18794 && decide (rows18794.all verify_row_calculations = true)) = true := by
     simpa [verify_full_certificate] using hcert_full
   have ⟨hSanity, _⟩ := (bool_and_eq_true).mp hall_true
 
-  -- hook 1: φ-dif ≥ finalLowerLo (linha x)  [precisa da sanidade]
+  -- hook 1: Φ-dif ≥ finalLowerLo (linha x) [precisa da sanidade]
   have hPhi_ge_final :=
     RoughBlocks.External.Certs.phiDiff_ge_row_finalLowerLo_18794
-      hSanity (m := m) (x := x) hm hx
+      hSanity hm hx
+  have hPhi_le_final :
+      ((RoughBlocks.External.Certs.row18794Of x hx).finalLowerLo : ℝ) ≤
+        ((PhiGE (m*m + x*m + m) (m+1) : ℝ)
+          - (PhiGE (m*m + x*m) (m+1) : ℝ)) := by
+    simpa [ge_iff_le] using hPhi_ge_final
+
   -- hook 2: LB ≤ finalLowerLo (linha x)
   have hLB_le_final :=
-    RoughBlocks.External.Certs.LB_le_row_finalLowerLo_18794
-      (m := m) (x := x) hm hx
+    RoughBlocks.External.Certs.LB_le_row_finalLowerLo_18794 hm hx
 
-  -- encadeia: LB ≤ final ≤ φ-dif
-  exact le_trans hLB_le_final hPhi_ge_final
+  -- encadeia: LB ≤ final ≤ Φ-dif
+  exact (le_trans hLB_le_final hPhi_le_final)
+
+
+
 
 /-- Ponte final: de `Φ-dif ≥ LB` e da identidade de janela,
 obtemos `LB ≤ countRoughInBlock` para `m ≥ 18794`, `x ≤ 8`. -/
@@ -72,5 +82,9 @@ theorem bridge_ge_18794_from_verified_certificate
   have hPhi := phiDiff_ge_LB_from_cert_18794 hcert_full hm hx
   -- ponte modular
   exact LB_le_count_block (fun N _ => (PhiGE N (m+1) : ℝ)) m x hm2 hx hPhi hCountEq
+
+
+#print axioms RoughBlocks.External.bridge_ge_18794_from_verified_certificate
+#check RoughBlocks.External.bridge_ge_18794_from_verified_certificate
 
 end RoughBlocks.External

@@ -11,7 +11,7 @@ namespace RoughBlocks.External.Certs.UniformLB18794Bridge
 noncomputable section
 
 open RoughBlocks RoughBlocks.Heavy
-open RoughBlocks.External.Certs.UniformGE18794Bridge
+--open RoughBlocks.External.Certs.UniformGE18794Bridge
 
 /-- alvo do projeto -/
 def m0 : ℕ := 18794
